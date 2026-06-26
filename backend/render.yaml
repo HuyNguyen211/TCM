@@ -1,0 +1,22 @@
+# Render.com blueprint for the TCM backend.
+# Create a new "Blueprint" from this repo, or a Web Service pointing at /backend.
+services:
+  - type: web
+    name: tcm-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DB_MODE
+        value: sheets
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false # set to your Vercel URL, e.g. https://tcm-app.vercel.app
+      - key: SHEET_ID
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_KEY
+        sync: false # paste the raw service-account JSON

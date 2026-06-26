@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+service-account*.json
+
+# Build output
+dist/
+.vite/
+
+# Mock DB data
+backend/data/
+
+# Logs
+*.log
+.logs/
+
+# Editor / OS
+.DS_Store
+.vercel
+
+# Local tooling (not part of the app)
+.tools/
+.mcp.json
