@@ -6,6 +6,9 @@ node_modules/
 .env.local
 .env.*.local
 service-account*.json
+# Google service-account key files (any name)
+my-tcm-*.json
+*-*.iam.gserviceaccount.com.json
 
 # Build output
 dist/
