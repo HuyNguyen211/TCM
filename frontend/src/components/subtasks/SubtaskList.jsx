@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSubtasks, useDeleteSubtask } from '../../hooks/useSubtasks.js';
+import { useCan } from '../../hooks/useCan.js';
 import { taskStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
 import JiraBadge from '../common/JiraBadge.jsx';
@@ -8,6 +9,7 @@ import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
 import SubtaskForm from './SubtaskForm.jsx';
 
 export default function SubtaskList({ projectId, taskId }) {
+  const { writeContent } = useCan();
   const { data, isLoading, isError } = useSubtasks(projectId, taskId);
   const delMut = useDeleteSubtask(projectId, taskId);
   const [formOpen, setFormOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function SubtaskList({ projectId, taskId }) {
     <section className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-700">Subtasks {data ? `(${data.total})` : ''}</h3>
-        <button className="btn-secondary" onClick={openCreate}>+ New Subtask</button>
+        {writeContent && <button className="btn-secondary" onClick={openCreate}>+ New Subtask</button>}
       </div>
 
       {isLoading && <Spinner />}
@@ -48,8 +50,8 @@ export default function SubtaskList({ projectId, taskId }) {
               </div>
               <div className="flex items-center gap-2">
                 <Badge className={taskStatusBadge[s.status]}>{s.status}</Badge>
-                <button className="btn-secondary py-1" onClick={() => openEdit(s)}>Edit</button>
-                <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(s)}>Xóa</button>
+                {writeContent && <button className="btn-secondary py-1" onClick={() => openEdit(s)}>Edit</button>}
+                {writeContent && <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(s)}>Xóa</button>}
               </div>
             </div>
           ))}

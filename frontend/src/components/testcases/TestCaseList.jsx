@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTestCases, useDeleteTestCase } from '../../hooks/useTestCases.js';
+import { useCan } from '../../hooks/useCan.js';
 import { MODULES, PRIORITIES, TESTCASE_STATUS, priorityBadge, tcStatusBadge, execStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
 import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
@@ -32,6 +33,7 @@ export default function TestCaseList({ projectId, taskId, subtaskId }) {
     ...(filters.status ? { status: filters.status } : {}),
     ...(filters.search ? { search: filters.search } : {}),
   };
+  const { writeContent } = useCan();
   const { data, isLoading, isError } = useTestCases(projectId, params);
   const delMut = useDeleteTestCase(projectId);
 
@@ -60,7 +62,7 @@ export default function TestCaseList({ projectId, taskId, subtaskId }) {
         <Select label="Module" value={filters.module} onChange={(v) => setFilter('module', v)} options={MODULES} />
         <Select label="Priority" value={filters.priority} onChange={(v) => setFilter('priority', v)} options={PRIORITIES} />
         <Select label="Status" value={filters.status} onChange={(v) => setFilter('status', v)} options={TESTCASE_STATUS} />
-        <button className="btn-primary" onClick={openCreate}>+ New Test Case</button>
+        {writeContent && <button className="btn-primary" onClick={openCreate}>+ New Test Case</button>}
       </div>
 
       {isLoading && <Spinner />}
@@ -111,10 +113,11 @@ export default function TestCaseList({ projectId, taskId, subtaskId }) {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-2">
-                      <button className="btn-secondary py-1" onClick={() => openEdit(tc)}>Edit</button>
-                      {tc.status !== 'DEPRECATED' && (
+                      {writeContent && <button className="btn-secondary py-1" onClick={() => openEdit(tc)}>Edit</button>}
+                      {writeContent && tc.status !== 'DEPRECATED' && (
                         <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(tc)}>Deprecate</button>
                       )}
+                      {!writeContent && <span className="text-xs text-gray-400">View only</span>}
                     </div>
                   </td>
                 </tr>

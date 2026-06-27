@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { validateBody, validateQuery } from '../middleware/validate.js';
+import { requireWriteRole } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/error.js';
 import { createTestCaseSchema, updateTestCaseSchema } from '../validators/testcase.schema.js';
 import { testCaseListQuery } from '../validators/common.schema.js';
@@ -11,6 +12,9 @@ import executionsRouter from './executions.routes.js';
 
 // mergeParams so :projectId from the parent router is available here.
 const router = Router({ mergeParams: true });
+
+// Reads open to all; create/edit/deprecate/execute require tester or higher.
+router.use(requireWriteRole('tester', 'lead', 'admin'));
 
 /** Re-number steps sequentially (1..n) and return a compact JSON string for col I. */
 function normalizeStepsJSON(stepsJSON) {

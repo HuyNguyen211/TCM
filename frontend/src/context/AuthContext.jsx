@@ -21,22 +21,32 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
-  // Dev login: email -> JWT. Swap the endpoint body for Google OAuth later.
-  const login = useCallback(async (email) => {
-    const res = await api.post('/auth/login', { email });
+  // Email + password -> JWT.
+  const login = useCallback(async (email, password) => {
+    const res = await api.post('/auth/login', { email, password });
+    tokenStore.set(res.data.token);
+    setUser(res.data.user);
+    return res.data.user;
+  }, []);
+
+  // Create an account, then sign in (the API returns a token on signup too).
+  const signup = useCallback(async ({ email, password, name, role }) => {
+    const res = await api.post('/auth/signup', { email, password, name, role });
     tokenStore.set(res.data.token);
     setUser(res.data.user);
     return res.data.user;
   }, []);
 
   const logout = useCallback(() => {
+    // Best-effort server notify; the token is cleared client-side regardless.
+    api.post('/auth/logout').catch(() => {});
     tokenStore.clear();
     setUser(null);
     window.location.href = '/login';
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

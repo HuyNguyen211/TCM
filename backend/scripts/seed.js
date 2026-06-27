@@ -7,10 +7,12 @@
  */
 import { initDb, list, create, update } from '../src/db/index.js';
 import { newId, nowIso } from '../src/utils/id.js';
+import { hashPassword } from '../src/utils/password.js';
 import { projectRollup } from '../src/services/aggregate.js';
 
 const OWNER = 'demo@firegroup.io';
 const TESTER = 'tester@firegroup.io';
+const DEMO_PASSWORD = 'password123'; // demo accounts — change for any real deployment
 
 async function main() {
   await initDb();
@@ -21,9 +23,10 @@ async function main() {
     return;
   }
 
-  // --- Users ---
-  await create('USERS', { userId: newId(), email: OWNER, role: 'lead', projects: [], lastLogin: nowIso() });
-  await create('USERS', { userId: newId(), email: TESTER, role: 'tester', projects: [], lastLogin: nowIso() });
+  // --- Users (with hashed demo password) ---
+  const passwordHash = await hashPassword(DEMO_PASSWORD);
+  await create('USERS', { userId: newId(), email: OWNER, name: 'Demo Lead', role: 'lead', projects: [], lastLogin: nowIso(), passwordHash });
+  await create('USERS', { userId: newId(), email: TESTER, name: 'Demo Tester', role: 'tester', projects: [], lastLogin: nowIso(), passwordHash });
 
   // --- Project ---
   const ecomId = newId();
@@ -126,7 +129,7 @@ async function main() {
   const m = await projectRollup(ecomId);
   await update('PROJECTS', ecomId, { totalCases: m.totalCases, passRate: m.passRate });
 
-  console.log('[seed] done. Login with', OWNER, 'or', TESTER);
+  console.log(`[seed] done. Login with ${OWNER} or ${TESTER} — password: ${DEMO_PASSWORD}`);
   console.log('[seed] E-commerce Platform -> Tasks: Authentication (1 subtask), Cart & Checkout (1 subtask)');
 }
 

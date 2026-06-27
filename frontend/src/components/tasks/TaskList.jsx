@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTasks, useDeleteTask } from '../../hooks/useTasks.js';
+import { useCan } from '../../hooks/useCan.js';
 import { taskStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
 import JiraBadge from '../common/JiraBadge.jsx';
@@ -8,6 +9,7 @@ import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
 import TaskForm from './TaskForm.jsx';
 
 export default function TaskList({ projectId }) {
+  const { writeContent } = useCan();
   const { data, isLoading, isError } = useTasks(projectId);
   const delMut = useDeleteTask(projectId);
   const [formOpen, setFormOpen] = useState(false);
@@ -26,7 +28,7 @@ export default function TaskList({ projectId }) {
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500">Tasks {data ? `(${data.total})` : ''} — sẽ link Jira sau</p>
-        <button className="btn-primary" onClick={openCreate}>+ New Task</button>
+        {writeContent && <button className="btn-primary" onClick={openCreate}>+ New Task</button>}
       </div>
 
       {isLoading && <Spinner />}
@@ -34,7 +36,7 @@ export default function TaskList({ projectId }) {
 
       {data && data.tasks.length === 0 && (
         <EmptyState title="Chưa có task nào" hint="Tạo task đầu tiên để bắt đầu (test case nằm trong task/subtask)."
-          action={<button className="btn-primary" onClick={openCreate}>+ New Task</button>} />
+          action={writeContent ? <button className="btn-primary" onClick={openCreate}>+ New Task</button> : null} />
       )}
 
       {data && data.tasks.length > 0 && (
@@ -57,8 +59,8 @@ export default function TaskList({ projectId }) {
               </div>
               <div className="mt-3 flex gap-2">
                 <Link to={`/projects/${projectId}/tasks/${t.taskId}`} className="btn-secondary py-1">Mở</Link>
-                <button className="btn-secondary py-1" onClick={() => openEdit(t)}>Edit</button>
-                <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(t)}>Xóa</button>
+                {writeContent && <button className="btn-secondary py-1" onClick={() => openEdit(t)}>Edit</button>}
+                {writeContent && <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(t)}>Xóa</button>}
               </div>
             </div>
           ))}

@@ -1,4 +1,13 @@
 // Mirror the backend enums (validators/common.schema.js) exactly.
+export const ROLES = ['admin', 'lead', 'tester', 'viewer']; // mirrors user.schema.js
+// Self-service signup cannot grant elevated roles (mirrors auth.schema.js).
+export const SIGNUP_ROLES = ['tester', 'viewer'];
+export const roleBadge = {
+  admin: 'bg-purple-100 text-purple-800',
+  lead: 'bg-blue-100 text-blue-800',
+  tester: 'bg-green-100 text-green-800',
+  viewer: 'bg-gray-100 text-gray-700',
+};
 export const PROJECT_STATUS = ['active', 'paused', 'archived'];
 export const MODULES = ['UI', 'API', 'DB', 'Performance', 'Security'];
 export const PRIORITIES = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];

@@ -2,10 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import { env } from './config/env.js';
 import { initDb } from './db/index.js';
-import { requireAuth } from './middleware/auth.js';
+import { requireAuth, requireRole } from './middleware/auth.js';
 import { notFound, errorHandler } from './middleware/error.js';
 
 import authRoutes from './routes/auth.routes.js';
+import usersRoutes from './routes/users.routes.js';
+import teamRoutes from './routes/team.routes.js';
 import projectsRoutes from './routes/projects.routes.js';
 import integrationsRoutes from './routes/integrations.routes.js';
 
@@ -19,6 +21,12 @@ app.get('/api/health', (req, res) => res.json({ ok: true, mode: env.DB_MODE }));
 
 // Public auth routes
 app.use('/api/auth', authRoutes);
+
+// Admin-only user management.
+app.use('/api/users', requireAuth, requireRole('admin'), usersRoutes);
+
+// Lead/admin team management (a lead's group of testers).
+app.use('/api/team', requireAuth, requireRole('lead', 'admin'), teamRoutes);
 
 // Everything else requires a valid JWT.
 app.use('/api/projects', requireAuth, projectsRoutes);

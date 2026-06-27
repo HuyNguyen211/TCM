@@ -10,7 +10,9 @@
     "seed": "node scripts/seed.js",
     "seed:more": "node scripts/seedMore.js",
     "reseed": "node scripts/reset.js",
-    "setup:sheets": "node scripts/setupSheets.js"
+    "setup:sheets": "node scripts/setupSheets.js",
+    "set:password": "node scripts/setPassword.js",
+    "create:user": "node scripts/createUser.js"
   },
   "engines": {
     "node": ">=18"

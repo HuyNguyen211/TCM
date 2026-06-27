@@ -25,3 +25,38 @@ export function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized', message: 'Invalid or expired token' });
   }
 }
+
+/**
+ * Gate a route to specific roles. Mount AFTER requireAuth.
+ * The role comes from the JWT, so role changes take effect on the user's next login.
+ * Usage: app.use('/api/users', requireAuth, requireRole('admin'), usersRoutes)
+ */
+export function requireRole(...roles) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized', message: 'Authentication required' });
+    }
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ error: 'Forbidden', message: 'You do not have permission to perform this action' });
+    }
+    return next();
+  };
+}
+
+/**
+ * Read-open, write-gated: GET/HEAD pass for any authenticated user (so viewers can
+ * read everything), while mutating methods (POST/PUT/PATCH/DELETE) require one of
+ * `roles`. Mount on a whole router to gate all its writes at once.
+ */
+export function requireWriteRole(...roles) {
+  return (req, res, next) => {
+    if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') return next();
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized', message: 'Authentication required' });
+    }
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ error: 'Forbidden', message: 'Your role cannot modify this resource' });
+    }
+    return next();
+  };
+}

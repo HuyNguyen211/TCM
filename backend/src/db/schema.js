@@ -118,6 +118,9 @@ export const SHEETS = {
       { col: 'C', key: 'role', type: 'string' },
       { col: 'D', key: 'projects', type: 'csv' }, // array of projectIds
       { col: 'E', key: 'lastLogin', type: 'datetime' },
+      { col: 'F', key: 'name', type: 'string' }, // display name
+      { col: 'G', key: 'passwordHash', type: 'string' }, // scrypt hash — never sent to clients
+      { col: 'H', key: 'managerId', type: 'string' }, // lead (userId) who manages this tester; '' = unassigned
     ],
   },
 

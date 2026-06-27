@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { validateBody } from '../middleware/validate.js';
+import { requireWriteRole } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/error.js';
 import { createExecutionSchema } from '../validators/execution.schema.js';
 import { list, findById, create, update } from '../db/index.js';
@@ -8,6 +9,9 @@ import { projectRollup } from '../services/aggregate.js';
 
 // mergeParams: projectId + testCaseId from parent routers.
 const router = Router({ mergeParams: true });
+
+// Reads open to all; recording an execution requires tester or higher.
+router.use(requireWriteRole('tester', 'lead', 'admin'));
 
 /**
  * POST /api/projects/:projectId/testcases/:testCaseId/execute

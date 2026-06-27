@@ -1,7 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
 import Login from './pages/Login.jsx';
+import Signup from './pages/Signup.jsx';
 import Dashboard from './pages/Dashboard.jsx';
+import AdminUsers from './pages/AdminUsers.jsx';
+import TeamManagement from './pages/TeamManagement.jsx';
 import ProjectView from './pages/ProjectView.jsx';
 import Integrations from './pages/Integrations.jsx';
 import TaskDetail from './pages/TaskDetail.jsx';
@@ -12,6 +15,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route
         path="/"
         element={
@@ -25,6 +29,22 @@ export default function App() {
         element={
           <ProtectedRoute>
             <Integrations />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminUsers />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/team"
+        element={
+          <ProtectedRoute roles={['lead', 'admin']}>
+            <TeamManagement />
           </ProtectedRoute>
         }
       />

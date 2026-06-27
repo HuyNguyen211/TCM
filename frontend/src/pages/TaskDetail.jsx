@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTask } from '../hooks/useTasks.js';
+import { useCan } from '../hooks/useCan.js';
 import { taskStatusBadge } from '../lib/constants.js';
 import Badge from '../components/common/Badge.jsx';
 import { Spinner, ErrorState } from '../components/common/States.jsx';
@@ -14,6 +15,7 @@ import GenTestcasesModal from '../components/ai/GenTestcasesModal.jsx';
 export default function TaskDetail() {
   const { projectId, taskId } = useParams();
   const { data: task, isLoading, isError } = useTask(projectId, taskId);
+  const { writeContent } = useCan();
   const [editOpen, setEditOpen] = useState(false);
   const [genOpen, setGenOpen] = useState(false);
 
@@ -30,7 +32,7 @@ export default function TaskDetail() {
             <Badge className={taskStatusBadge[task.status]}>{task.status}</Badge>
             <JiraBadge value={task.jiraKey} />
           </div>
-          <button className="btn-secondary" onClick={() => setEditOpen(true)}>Edit task</button>
+          {writeContent && <button className="btn-secondary" onClick={() => setEditOpen(true)}>Edit task</button>}
         </div>
         {task.description && <p className="mt-1 text-sm text-gray-500">{task.description}</p>}
         {task.assignee && <p className="mt-1 text-xs text-gray-400">Assignee: {task.assignee}</p>}
@@ -44,7 +46,7 @@ export default function TaskDetail() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-gray-700">Test Cases (trực tiếp trong task này)</h3>
-          <button className="btn-primary" onClick={() => setGenOpen(true)}>✨ Gen Testcase with AI</button>
+          {writeContent && <button className="btn-primary" onClick={() => setGenOpen(true)}>✨ Gen Testcase with AI</button>}
         </div>
         <p className="text-xs text-gray-400">Test case không thuộc subtask nào. Test case của subtask nằm trong trang subtask.</p>
         <TestCaseList projectId={projectId} taskId={taskId} />

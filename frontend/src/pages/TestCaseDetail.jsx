@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTestCase } from '../hooks/useTestCases.js';
 import { useExecutions } from '../hooks/useExecutions.js';
+import { useCan } from '../hooks/useCan.js';
 import { priorityBadge, tcStatusBadge, execStatusBadge } from '../lib/constants.js';
 import Badge from '../components/common/Badge.jsx';
 import { Spinner, ErrorState } from '../components/common/States.jsx';
@@ -12,6 +13,7 @@ export default function TestCaseDetail() {
   const { projectId, testCaseId } = useParams();
   const { data: tc, isLoading, isError } = useTestCase(projectId, testCaseId);
   const { data: execData } = useExecutions(projectId, testCaseId);
+  const { writeContent } = useCan();
   const [editOpen, setEditOpen] = useState(false);
   const [execOpen, setExecOpen] = useState(false);
 
@@ -32,10 +34,12 @@ export default function TestCaseDetail() {
             <Badge className={tcStatusBadge[tc.status]}>{tc.status}</Badge>
             <span className="badge bg-gray-100 text-gray-600" title="Version (tăng mỗi lần sửa)">v{tc.version}</span>
           </div>
-          <div className="flex gap-2">
-            <button className="btn-secondary" onClick={() => setEditOpen(true)}>Edit</button>
-            <button className="btn-primary" onClick={() => setExecOpen(true)}>Record Execution</button>
-          </div>
+          {writeContent && (
+            <div className="flex gap-2">
+              <button className="btn-secondary" onClick={() => setEditOpen(true)}>Edit</button>
+              <button className="btn-primary" onClick={() => setExecOpen(true)}>Record Execution</button>
+            </div>
+          )}
         </div>
 
         {/* Latest execution result — updated via "Record Execution", not editable directly. */}

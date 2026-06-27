@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTask } from '../hooks/useTasks.js';
 import { useSubtask } from '../hooks/useSubtasks.js';
+import { useCan } from '../hooks/useCan.js';
 import { taskStatusBadge } from '../lib/constants.js';
 import Badge from '../components/common/Badge.jsx';
 import { Spinner, ErrorState } from '../components/common/States.jsx';
@@ -15,6 +16,7 @@ export default function SubtaskDetail() {
   const { projectId, taskId, subtaskId } = useParams();
   const { data: task } = useTask(projectId, taskId);
   const { data: subtask, isLoading, isError } = useSubtask(projectId, taskId, subtaskId);
+  const { writeContent } = useCan();
   const [editOpen, setEditOpen] = useState(false);
   const [genOpen, setGenOpen] = useState(false);
 
@@ -37,7 +39,7 @@ export default function SubtaskDetail() {
             <Badge className={taskStatusBadge[subtask.status]}>{subtask.status}</Badge>
             <JiraBadge value={subtask.jiraKey} />
           </div>
-          <button className="btn-secondary" onClick={() => setEditOpen(true)}>Edit subtask</button>
+          {writeContent && <button className="btn-secondary" onClick={() => setEditOpen(true)}>Edit subtask</button>}
         </div>
         {subtask.description && <p className="mt-1 text-sm text-gray-500">{subtask.description}</p>}
         {subtask.assignee && <p className="mt-1 text-xs text-gray-400">Assignee: {subtask.assignee}</p>}
@@ -47,7 +49,7 @@ export default function SubtaskDetail() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold text-gray-700">Test Cases trong subtask này</h3>
-          <button className="btn-primary" onClick={() => setGenOpen(true)}>✨ Gen Testcase with AI</button>
+          {writeContent && <button className="btn-primary" onClick={() => setGenOpen(true)}>✨ Gen Testcase with AI</button>}
         </div>
         <TestCaseList projectId={projectId} taskId={taskId} subtaskId={subtaskId} />
       </div>

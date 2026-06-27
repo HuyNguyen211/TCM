@@ -26,9 +26,25 @@ export default function Layout({ children }) {
             >
               Integrations
             </Link>
+            {(user?.role === 'lead' || user?.role === 'admin') && (
+              <Link
+                to="/team"
+                className={pathname === '/team' ? 'font-semibold text-brand-700' : 'text-gray-600 hover:text-gray-900'}
+              >
+                Team
+              </Link>
+            )}
+            {user?.role === 'admin' && (
+              <Link
+                to="/admin/users"
+                className={pathname === '/admin/users' ? 'font-semibold text-brand-700' : 'text-gray-600 hover:text-gray-900'}
+              >
+                Users
+              </Link>
+            )}
             {user && (
               <div className="flex items-center gap-3">
-                <span className="hidden text-gray-500 sm:inline">{user.email}</span>
+                <span className="hidden text-gray-500 sm:inline">{user.name || user.email}</span>
                 <span className="badge bg-brand-50 text-brand-700">{user.role}</span>
                 <button onClick={logout} className="btn-secondary">Logout</button>
               </div>

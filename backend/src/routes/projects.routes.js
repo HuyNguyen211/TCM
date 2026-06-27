@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { validateBody, validateQuery } from '../middleware/validate.js';
+import { requireRole } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/error.js';
 import { createProjectSchema, updateProjectSchema } from '../validators/project.schema.js';
 import { projectListQuery } from '../validators/common.schema.js';
@@ -39,9 +40,10 @@ router.get(
   })
 );
 
-/** POST /api/projects -> create. */
+/** POST /api/projects -> create. (lead/admin only) */
 router.post(
   '/',
+  requireRole('lead', 'admin'),
   validateBody(createProjectSchema),
   asyncHandler(async (req, res) => {
     const { projectName, description, status } = req.body;
@@ -70,9 +72,10 @@ router.get(
   })
 );
 
-/** PUT /api/projects/:projectId -> edit name/description/status. */
+/** PUT /api/projects/:projectId -> edit name/description/status. (lead/admin only) */
 router.put(
   '/:projectId',
+  requireRole('lead', 'admin'),
   validateBody(updateProjectSchema),
   asyncHandler(async (req, res) => {
     const updated = await update('PROJECTS', req.params.projectId, req.body);

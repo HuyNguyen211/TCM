@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useProjects.js';
+import { useCan } from '../../hooks/useCan.js';
 import { PROJECT_STATUS, projectStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
 import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
@@ -14,6 +15,7 @@ export default function ProjectList() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
+  const { manageProjects } = useCan();
   const params = { skip, limit: PAGE, ...(status ? { status } : {}) };
   const { data, isLoading, isError } = useProjects(params);
 
@@ -34,7 +36,7 @@ export default function ProjectList() {
             {PROJECT_STATUS.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
-        <button className="btn-primary" onClick={openCreate}>+ New Project</button>
+        {manageProjects && <button className="btn-primary" onClick={openCreate}>+ New Project</button>}
       </div>
 
       {isLoading && <Spinner />}
@@ -43,8 +45,8 @@ export default function ProjectList() {
       {data && data.projects.length === 0 && (
         <EmptyState
           title="No projects yet"
-          hint="Create your first project to start adding test cases."
-          action={<button className="btn-primary" onClick={openCreate}>+ New Project</button>}
+          hint={manageProjects ? 'Create your first project to start adding test cases.' : 'No projects to show yet.'}
+          action={manageProjects ? <button className="btn-primary" onClick={openCreate}>+ New Project</button> : null}
         />
       )}
 
@@ -75,7 +77,7 @@ export default function ProjectList() {
                   <td className="px-4 py-3 text-right tabular-nums">{p.totalCases}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{p.passRate}%</td>
                   <td className="px-4 py-3 text-right">
-                    <button className="btn-secondary py-1" onClick={() => openEdit(p)}>Edit</button>
+                    {manageProjects && <button className="btn-secondary py-1" onClick={() => openEdit(p)}>Edit</button>}
                   </td>
                 </tr>
               ))}

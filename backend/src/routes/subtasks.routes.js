@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { validateBody } from '../middleware/validate.js';
+import { requireWriteRole } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/error.js';
 import { createSubtaskSchema, updateSubtaskSchema } from '../validators/subtask.schema.js';
 import { list, findById, create, update, remove } from '../db/index.js';
@@ -9,6 +10,9 @@ import { genTestcases, isConfigured as aiConfigured } from '../services/aiTestca
 
 // mergeParams: projectId + taskId from parent routers.
 const router = Router({ mergeParams: true });
+
+// Reads open to all; create/edit/delete require tester or higher.
+router.use(requireWriteRole('tester', 'lead', 'admin'));
 
 /** GET /api/projects/:projectId/tasks/:taskId/subtasks -> subtasks with test-case counts. */
 router.get(

@@ -1,11 +1,15 @@
 import { Router } from 'express';
 import { validateBody } from '../middleware/validate.js';
+import { requireWriteRole } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/error.js';
 import { createSuiteSchema } from '../validators/suite.schema.js';
 import { list, findById, create } from '../db/index.js';
 import { newId } from '../utils/id.js';
 
 const router = Router({ mergeParams: true });
+
+// Reads open to all; create requires tester or higher.
+router.use(requireWriteRole('tester', 'lead', 'admin'));
 
 /** GET /api/projects/:projectId/suites -> list suites for a project. */
 router.get(
