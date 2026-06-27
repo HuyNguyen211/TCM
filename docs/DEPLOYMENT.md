@@ -28,6 +28,25 @@ Vercel (React/Vite)  ──HTTPS──>  Render (Express API)  ──Sheets API�
    | `SHEET_ID` | your spreadsheet id |
    | `GOOGLE_SERVICE_ACCOUNT_KEY` | the **raw** service-account JSON (one line) |
 
+   **Integration variables (optional)** — these power the **Integrations** page and
+   the "Gen Testcase with AI" button. They live **only** in the Render environment
+   (the local `backend/.env` is gitignored and never deployed). Leave any blank and
+   that service shows **"Chưa cấu hình"**. Add all/any of:
+
+   | Key | Value |
+   |---|---|
+   | `ATLASSIAN_BASE_URL` | e.g. `https://your-site.atlassian.net` |
+   | `ATLASSIAN_EMAIL` | the Atlassian account email |
+   | `ATLASSIAN_API_TOKEN` | [API token](https://id.atlassian.com/manage-profile/security/api-tokens) |
+   | `FIGMA_TOKEN` | Figma → Settings → Security → Personal access tokens |
+   | `ANTHROPIC_API_KEY` | [Anthropic API key](https://console.anthropic.com/settings/keys) |
+   | `ANTHROPIC_MODEL` | e.g. `claude-sonnet-4-6` (optional; has a default) |
+
+   > **Server uses the API key**, not OAuth. `ANTHROPIC_AUTH_TOKEN` works locally but is
+   > short-lived and **not auto-refreshed** — don't use it on a long-running server.
+   > After adding/changing these, redeploy (or restart) and hit **"↻ Test lại"** on the
+   > Integrations page; each should flip to **"Đã kết nối"**.
+
 4. Deploy. Then **run once** against the prod spreadsheet (Render shell, or locally with prod env):
    - `npm run setup:sheets` — provision/refresh tabs + headers.
    - `npm run create:user <email> <password> admin "<Name>"` — bootstrap the first admin.
@@ -79,6 +98,7 @@ by an admin via the User Management page. Bootstrap the first admin from the CLI
 - [ ] Weak demo accounts (`password123`) removed or re-passworded before public exposure.
 - [ ] `VITE_API_URL` points at the deployed backend `/api`.
 - [ ] Health check green at `/api/health`.
+- [ ] Integration tokens (`ATLASSIAN_*`, `FIGMA_TOKEN`, `ANTHROPIC_API_KEY`) set in the **Render** env if those features are needed — they are **not** read from `backend/.env` in prod.
 
 ## 6. Local development recap
 

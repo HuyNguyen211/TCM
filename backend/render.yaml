@@ -20,3 +20,22 @@ services:
         sync: false
       - key: GOOGLE_SERVICE_ACCOUNT_KEY
         sync: false # paste the raw service-account JSON
+      # ---- Integrations (optional — power the Integrations page) ----
+      # All secrets: sync:false keeps them out of the repo; set the values in the
+      # Render dashboard (Environment). Any one left blank => "Chưa cấu hình".
+      # Atlassian (Jira) — token: https://id.atlassian.com/manage-profile/security/api-tokens
+      - key: ATLASSIAN_BASE_URL
+        sync: false # e.g. https://your-site.atlassian.net
+      - key: ATLASSIAN_EMAIL
+        sync: false
+      - key: ATLASSIAN_API_TOKEN
+        sync: false
+      # Figma — token: Figma → Settings → Security → Personal access tokens
+      - key: FIGMA_TOKEN
+        sync: false
+      # AI (Claude) — powers "Gen Testcase with AI". Prefer the API key on a server
+      # (ANTHROPIC_AUTH_TOKEN OAuth is short-lived and NOT auto-refreshed).
+      - key: ANTHROPIC_API_KEY
+        sync: false # https://console.anthropic.com/settings/keys
+      - key: ANTHROPIC_MODEL
+        value: claude-sonnet-4-6
