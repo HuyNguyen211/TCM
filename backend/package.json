@@ -9,6 +9,7 @@
     "start": "node src/server.js",
     "seed": "node scripts/seed.js",
     "seed:more": "node scripts/seedMore.js",
+    "seed:demo": "node scripts/seedDemo.js",
     "reseed": "node scripts/reset.js",
     "setup:sheets": "node scripts/setupSheets.js",
     "set:password": "node scripts/setPassword.js",
