@@ -80,8 +80,8 @@ export default function TestCaseList({ projectId, taskId, subtaskId }) {
                 <th className="px-4 py-2">Name</th>
                 <th className="px-4 py-2">Module</th>
                 <th className="px-4 py-2">Priority</th>
-                <th className="px-4 py-2" title="Trạng thái vòng đời test case">TC Status</th>
-                <th className="px-4 py-2" title="Kết quả lần chạy gần nhất">Result</th>
+                <th className="px-4 py-2" title="Test case lifecycle status">TC Status</th>
+                <th className="px-4 py-2" title="Result of the latest run">Result</th>
                 <th className="px-4 py-2">Tags</th>
                 <th className="px-4 py-2"></th>
               </tr>
@@ -94,7 +94,7 @@ export default function TestCaseList({ projectId, taskId, subtaskId }) {
                       <Link to={`/projects/${projectId}/testcases/${tc.testCaseId}`} className="font-medium text-brand-700 hover:underline">
                         {tc.testCaseName}
                       </Link>
-                      <span className="badge bg-gray-100 text-gray-500" title="Version (tăng mỗi lần sửa)">v{tc.version}</span>
+                      <span className="badge bg-gray-100 text-gray-500" title="Version (increments on each edit)">v{tc.version}</span>
                     </div>
                     <p className="text-xs text-gray-400">{tc.steps?.length || 0} step(s)</p>
                   </td>
@@ -104,7 +104,7 @@ export default function TestCaseList({ projectId, taskId, subtaskId }) {
                   <td className="px-4 py-3">
                     {tc.latestResult
                       ? <Badge className={execStatusBadge[tc.latestResult]}>{tc.latestResult}</Badge>
-                      : <Badge className="bg-slate-100 text-slate-500">Chưa chạy</Badge>}
+                      : <Badge className="bg-slate-100 text-slate-500">Not run</Badge>}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">

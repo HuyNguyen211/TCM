@@ -6,9 +6,9 @@ import { apiErrorMessage } from '../lib/api.js';
 
 function StatusBadge({ s }) {
   if (!s) return null;
-  if (!s.configured) return <Badge className="bg-slate-100 text-slate-500">Chưa cấu hình</Badge>;
-  if (s.ok) return <Badge className="bg-green-100 text-green-800">Đã kết nối</Badge>;
-  return <Badge className="bg-red-100 text-red-800">Lỗi kết nối</Badge>;
+  if (!s.configured) return <Badge className="bg-slate-100 text-slate-500">Not configured</Badge>;
+  if (s.ok) return <Badge className="bg-green-100 text-green-800">Connected</Badge>;
+  return <Badge className="bg-red-100 text-red-800">Connection error</Badge>;
 }
 
 function ServiceCard({ title, hint, status, children }) {
@@ -59,7 +59,7 @@ function LiveTest({ label, placeholder, onRun, disabled }) {
           {loading ? '…' : 'Fetch'}
         </button>
       </div>
-      {disabled && <p className="mt-1 text-xs text-gray-400">Cấu hình credentials để dùng.</p>}
+      {disabled && <p className="mt-1 text-xs text-gray-400">Configure credentials to use this.</p>}
       {error && <p className="field-error whitespace-pre-line">{error}</p>}
       {result && (
         <pre className="mt-2 overflow-x-auto rounded bg-gray-50 p-2 text-xs text-gray-700">
@@ -78,25 +78,25 @@ export default function Integrations() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Integrations</h1>
-          <p className="text-sm text-gray-500">Kết nối Atlassian (Jira) & Figma cho các function tương lai.</p>
+          <p className="text-sm text-gray-500">Connect Atlassian (Jira) & Figma for upcoming features.</p>
         </div>
         <button className="btn-secondary" onClick={() => refetch()} disabled={isFetching}>
-          {isFetching ? 'Đang kiểm tra…' : '↻ Test lại'}
+          {isFetching ? 'Checking…' : '↻ Re-test'}
         </button>
       </div>
 
-      {isLoading && <Spinner label="Kiểm tra kết nối…" />}
-      {isError && <p className="field-error">Không gọi được /api/integrations/status</p>}
+      {isLoading && <Spinner label="Checking connections…" />}
+      {isError && <p className="field-error">Could not reach /api/integrations/status</p>}
 
       {data && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <ServiceCard
             title="Atlassian (Jira)"
-            hint="REST API · cấu hình ATLASSIAN_* trong backend/.env"
+            hint="REST API · configure ATLASSIAN_* in backend/.env"
             status={data.atlassian}
           >
             <LiveTest
-              label="Lấy thử Jira issue"
+              label="Try fetching a Jira issue"
               placeholder="ECOM-12"
               disabled={!data.atlassian?.configured}
               onRun={fetchJiraIssue}
@@ -105,11 +105,11 @@ export default function Integrations() {
 
           <ServiceCard
             title="Figma"
-            hint="REST API · cấu hình FIGMA_TOKEN trong backend/.env"
+            hint="REST API · configure FIGMA_TOKEN in backend/.env"
             status={data.figma}
           >
             <LiveTest
-              label="Lấy thử Figma file (key hoặc URL)"
+              label="Try fetching a Figma file (key or URL)"
               placeholder="https://figma.com/file/abc/..."
               disabled={!data.figma?.configured}
               onRun={fetchFigmaFile}
@@ -124,16 +124,16 @@ export default function Integrations() {
             <h3 className="font-semibold">AI (Claude) — Gen Testcase</h3>
             <StatusBadge s={data.ai} />
           </div>
-          <p className="mt-1 text-xs text-gray-400">cấu hình ANTHROPIC_API_KEY (hoặc ANTHROPIC_AUTH_TOKEN) trong backend/.env</p>
+          <p className="mt-1 text-xs text-gray-400">configure ANTHROPIC_API_KEY (or ANTHROPIC_AUTH_TOKEN) in backend/.env</p>
           {data.ai?.configured
-            ? <p className="mt-2 text-sm text-gray-600">Model: <strong>{data.ai.model}</strong> · Auth: <strong>{data.ai.authMode === 'oauth' ? 'OAuth token' : 'API key'}</strong> — dùng ở nút “Gen Testcase with AI”.</p>
+            ? <p className="mt-2 text-sm text-gray-600">Model: <strong>{data.ai.model}</strong> · Auth: <strong>{data.ai.authMode === 'oauth' ? 'OAuth token' : 'API key'}</strong> — used by the “Gen Testcase with AI” button.</p>
             : <p className="mt-2 text-sm text-gray-500">{data.ai?.message}</p>}
         </div>
       )}
 
       <div className="card border-dashed p-4 text-sm text-gray-500">
-        <p className="font-medium text-gray-700">Cách cấu hình</p>
-        <p className="mt-1">Thêm token vào <code>backend/.env</code> rồi restart backend. Xem chi tiết ở <code>docs/INTEGRATIONS.md</code>. MCP cho Claude Code cấu hình ở <code>.mcp.json</code>.</p>
+        <p className="font-medium text-gray-700">How to configure</p>
+        <p className="mt-1">Add tokens to <code>backend/.env</code>, then restart the backend. See details in <code>docs/INTEGRATIONS.md</code>. MCP for Claude Code is configured in <code>.mcp.json</code>.</p>
       </div>
     </div>
   );

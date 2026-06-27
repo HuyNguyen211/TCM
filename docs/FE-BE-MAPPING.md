@@ -77,7 +77,7 @@ Endpoints: `GET/POST /api/projects/:projectId/tasks`, `GET/PUT/DELETE /…/tasks
 
 > **Test-case result:** GET list + single responses include `latestResult` = the most
 > recent execution's status (`PASSED|FAILED|BLOCKED|SKIPPED`), or `''` when never run
-> (shown as "Chưa chạy"). It's derived from EXECUTIONS — set only via *Record Execution*,
+> (shown as "Not run"). It's derived from EXECUTIONS — set only via *Record Execution*,
 > never edited directly. `version` (col J) is the edit count, unrelated to result.
 
 Endpoints: `GET/POST /api/projects/:projectId/tasks/:taskId/subtasks`,

@@ -1,39 +1,39 @@
-# HƯỚNG DẪN SỬ DỤNG — TCM (Test Case Management)
+# USER GUIDE — TCM (Test Case Management)
 
-Tài liệu này hướng dẫn **sử dụng & demo** sản phẩm TCM cho khách hàng. Phần dành cho lập trình viên (mapping field, deploy…) xem ở [README.md](README.md) và thư mục [docs/](docs/).
+This document explains how to **use & demo** the TCM product for customers. For developer-facing material (field mapping, deployment, etc.) see [README.md](README.md) and the [docs/](docs/) folder.
 
-> **TCM là gì?** Một ứng dụng quản lý ca kiểm thử (test case) đầy đủ: tổ chức công việc theo phân cấp **Dự án → Task → Sub-task → Test Case → Lần thực thi**, ghi nhận kết quả Pass/Fail/Blocked/Skip, dựng báo cáo & biểu đồ tỉ lệ pass, phân quyền 4 vai trò, tích hợp Jira/Confluence/Figma và **sinh test case tự động bằng AI (Claude)**.
-
----
-
-## 1. Mô hình dữ liệu (cần nắm trước khi demo)
-
-```
-Dự án (Project)
-└── Task                     ← gắn Jira key, link Confluence, link Figma
-    ├── Sub-task             ← chia nhỏ task (tuỳ chọn)
-    │   └── Test Case        ← ca kiểm thử + các bước (steps)
-    │       └── Execution    ← lần chạy: Pass / Fail / Blocked / Skip
-    └── Test Case            ← test case có thể gắn trực tiếp vào Task (không cần sub-task)
-```
-
-- **Tỉ lệ pass (`passRate`) và tổng số case (`totalCases`) luôn được tính lại theo dữ liệu thật**, không lấy số cũ.
-- Một test case lấy **kết quả mới nhất** (theo ngày thực thi) làm trạng thái hiện tại. Case chưa có lần chạy nào = **Chưa chạy (PENDING)**.
+> **What is TCM?** A full-featured test case management application: it organizes work in the hierarchy **Project → Task → Sub-task → Test Case → Execution**, records Pass/Fail/Blocked/Skip results, builds reports & pass-rate charts, supports 4 permission roles, integrates with Jira/Confluence/Figma, and **generates test cases automatically with AI (Claude)**.
 
 ---
 
-## 2. Khởi chạy để Demo
+## 1. Data model (worth understanding before the demo)
 
-Có 2 chế độ dữ liệu, chuyển đổi bằng 1 biến môi trường `DB_MODE` trong [backend/.env](backend/.env):
+```
+Project
+└── Task                     ← carries a Jira key, Confluence link, Figma link
+    ├── Sub-task             ← breaks a task down (optional)
+    │   └── Test Case        ← a test case + its steps
+    │       └── Execution    ← a run: Pass / Fail / Blocked / Skip
+    └── Test Case            ← a test case can attach directly to a Task (no sub-task needed)
+```
 
-| Chế độ | `DB_MODE` | Dữ liệu nằm ở | Khi nào dùng |
+- **The pass rate (`passRate`) and total case count (`totalCases`) are always recomputed from live data**, never taken from stale values.
+- A test case uses its **latest result** (by execution date) as its current status. A case with no runs yet = **Not run (PENDING)**.
+
+---
+
+## 2. Running the Demo
+
+There are 2 data modes, switched with a single `DB_MODE` environment variable in [backend/.env](backend/.env):
+
+| Mode | `DB_MODE` | Where data lives | When to use |
 |---|---|---|---|
-| **Mock (khuyến nghị khi demo)** | `mock` | File JSON local `backend/data/*.json` | Tự chứa, không cần mạng/credential — an toàn nhất khi trình diễn |
-| **Google Sheets** | `sheets` | Google Sheet `1aDw5VQE…` | Khi muốn khoe tích hợp Sheets thật |
+| **Mock (recommended for demos)** | `mock` | Local JSON files `backend/data/*.json` | Self-contained, no network/credentials needed — the safest option when presenting |
+| **Google Sheets** | `sheets` | Google Sheet `1aDw5VQE…` | When you want to show the real Sheets integration |
 
-> Bộ dữ liệu demo trong tài liệu này **đã được nạp sẵn vào CẢ HAI** chế độ.
+> The demo dataset in this document **has been pre-loaded into BOTH** modes.
 
-### Các bước chạy
+### Steps to run
 
 ```bash
 # Terminal 1 — Backend (API: http://localhost:4000)
@@ -47,160 +47,160 @@ npm install
 npm run dev
 ```
 
-Mở **http://localhost:5173** → đăng nhập → vào dự án **"E-commerce Platform"**.
+Open **http://localhost:5173** → log in → open the **"E-commerce Platform"** project.
 
-### Tài khoản demo (mặc định khi seed)
+### Demo accounts (defaults from seeding)
 
-| Email | Vai trò | Mật khẩu |
+| Email | Role | Password |
 |---|---|---|
-| `demo@firegroup.io` | **lead** (gần như toàn quyền) | `password123` |
+| `demo@firegroup.io` | **lead** (near-full access) | `password123` |
 | `tester@firegroup.io` | **tester** | `password123` |
 
-> Có thể **Đăng ký (Sign up)** tài khoản mới ngay trên màn hình login (chỉ tạo được vai trò `tester`/`viewer`). Cần đổi mật khẩu? Dùng `npm run set:password` trong `backend/`. Tạo user mới (kể cả admin) bằng `npm run create:user`.
+> You can **Sign up** for a new account right on the login screen (only `tester`/`viewer` roles can be self-created). Need to change a password? Use `npm run set:password` in `backend/`. Create a new user (including an admin) with `npm run create:user`.
 
 ---
 
-## 3. Vai trò & phân quyền
+## 3. Roles & permissions
 
-| Vai trò | Quyền |
+| Role | Permissions |
 |---|---|
-| **viewer** | Chỉ xem mọi thứ |
-| **tester** | + Tạo/sửa Task, Sub-task, Test Case, ghi nhận kết quả thực thi |
-| **lead** | + Tạo/sửa Dự án, quản lý đội tester của mình (Team) |
-| **admin** | + Quản lý toàn bộ người dùng (Admin → Users) |
+| **viewer** | View everything only |
+| **tester** | + Create/edit Tasks, Sub-tasks, Test Cases, and record execution results |
+| **lead** | + Create/edit Projects, manage their own tester team (Team) |
+| **admin** | + Manage all users (Admin → Users) |
 
-Khi đăng nhập bằng vai trò thấp hơn, các nút thao tác (tạo/sửa/xoá) sẽ tự ẩn — tiện để demo phân quyền.
+When logged in with a lower role, the action buttons (create/edit/delete) hide automatically — handy for demoing the permission model.
 
 ---
 
-## 4. Hướng dẫn theo từng màn hình
+## 4. Guide by screen
 
-### 4.1. Dashboard — danh sách dự án
-- Hiển thị các dự án kèm **tổng số case** và **tỉ lệ pass**; lọc theo trạng thái (`active`/`paused`/`archived`), tìm kiếm, phân trang.
-- Nút **+ New Project** (lead/admin): tạo dự án mới.
-- Bấm vào một dự án để mở **Trang dự án**.
+### 4.1. Dashboard — project list
+- Shows projects with their **total case count** and **pass rate**; filter by status (`active`/`paused`/`archived`), search, and paginate.
+- **+ New Project** button (lead/admin): create a new project.
+- Click a project to open the **Project View**.
 
-### 4.2. Trang dự án (Project View)
-- **Báo cáo & biểu đồ** ở đầu trang: KPI (tổng case, đã chạy, chưa chạy, % pass, % fail), biểu đồ tỉ lệ pass theo ngày, phân bố trạng thái (pie), và **thống kê theo Module**.
-- **Cây Task / Sub-task**: liệt kê các task; mỗi task có badge trạng thái (To Do / In Progress / Done), **Jira key**, và link Confluence/Figma nếu có.
-- Bấm vào Task → **Task Detail**.
+### 4.2. Project View
+- **Reports & charts** at the top of the page: KPIs (total cases, executed, not run, % pass, % fail), a daily pass-rate chart, a status distribution (pie), and **per-Module statistics**.
+- **Task / Sub-task tree**: lists the tasks; each task has a status badge (To Do / In Progress / Done), a **Jira key**, and Confluence/Figma links if present.
+- Click a Task → **Task Detail**.
 
 ### 4.3. Task / Sub-task Detail
-- Xem & sửa thông tin task, danh sách sub-task và danh sách test case trực thuộc.
-- Khu **Liên kết tài nguyên**: Jira / Confluence / Figma.
-- Nút **✨ Gen Testcase with AI** (xem mục 4.6).
+- View & edit task details, the sub-task list, and the list of test cases that belong to it.
+- A **Resource Links** section: Jira / Confluence / Figma.
+- The **✨ Gen Testcase with AI** button (see section 4.6).
 
 ### 4.4. Test Case
-Mỗi test case gồm:
-- **Tên**, **Module** (`UI / API / DB / Performance / Security`), **Priority** (`CRITICAL / HIGH / MEDIUM / LOW`), **Status** (`DRAFT / ACTIVE / DEPRECATED`).
-- **Tags** (chip): smoke, regression, negative, api, payment…
-- **Bảng các bước (Steps)**: mỗi bước gồm *Hành động* và *Kết quả mong đợi* — thêm/bớt động.
-- Xoá test case là **soft-delete** (chuyển `DEPRECATED`), không mất dữ liệu.
+Each test case includes:
+- **Name**, **Module** (`UI / API / DB / Performance / Security`), **Priority** (`CRITICAL / HIGH / MEDIUM / LOW`), **Status** (`DRAFT / ACTIVE / DEPRECATED`).
+- **Tags** (chips): smoke, regression, negative, api, payment, etc.
+- **Steps table**: each step has an *Action* and an *Expected result* — add/remove rows dynamically.
+- Deleting a test case is a **soft delete** (it moves to `DEPRECATED`); no data is lost.
 
-### 4.5. Ghi nhận kết quả thực thi (Execution)
-- Trên trang Test Case, bấm **Record Execution / Ghi kết quả**.
-- Chọn 1 trong: **Pass ✅ / Fail ❌ / Blocked ⚠️ / Skip ⏭️**.
-- Nếu **Fail** → **bắt buộc nhập lý do thất bại** (validate ở cả UI lẫn API).
-- Có thể nhập thời lượng (giây), ghi chú, link bằng chứng (evidence URL).
-- Toàn bộ **lịch sử thực thi** được lưu theo từng test case.
+### 4.5. Recording an execution result (Execution)
+- On the Test Case page, click **Record Execution**.
+- Choose one of: **Pass ✅ / Fail ❌ / Blocked ⚠️ / Skip ⏭️**.
+- If **Fail** → a **failure reason is required** (validated on both the UI and the API).
+- You can enter a duration (seconds), notes, and evidence URLs.
+- The full **execution history** is stored per test case.
 
-### 4.6. Sinh Test Case bằng AI ✨ (điểm nhấn khi demo)
-- Tại Task/Sub-task, bấm **Gen Testcase with AI**.
-- AI (Claude) đọc **tên + mô tả** của task, và nếu có thì đọc thêm **Jira / Confluence / Figma** đã liên kết → đề xuất danh sách test case.
-- Bạn **xem trước (preview)** và **chọn case nào muốn tạo** — không tự lưu bừa.
-- Yêu cầu: đã cấu hình `ANTHROPIC_API_KEY` trong [backend/.env](backend/.env) (đang để model `claude-sonnet-4-6`).
+### 4.6. Generating Test Cases with AI ✨ (the demo highlight)
+- On a Task/Sub-task, click **Gen Testcase with AI**.
+- The AI (Claude) reads the task's **name + description** and, if present, also reads the linked **Jira / Confluence / Figma** → and proposes a list of test cases.
+- You get a **preview** and **choose which cases to create** — nothing is saved blindly.
+- Requirement: `ANTHROPIC_API_KEY` configured in [backend/.env](backend/.env) (currently set to the `claude-sonnet-4-6` model).
 
-> **Lưu ý khi demo AI:** các task mẫu E-commerce dùng link Confluence/Figma _ví dụ_ (`example.com`) nên có thể hiện cảnh báo "không đọc được nguồn" — **AI vẫn sinh được** từ tên + mô tả task (đã viết chi tiết bằng tiếng Việt). Muốn khoe tích hợp đọc nguồn thật, hãy dùng task có **link Jira/Confluence/Figma thật**.
+> **Note when demoing AI:** the sample E-commerce tasks use _example_ Confluence/Figma links (`example.com`), so you may see a "could not read source" warning — **the AI can still generate** from the task name + description (written in detail). To show real source-reading integration, use a task with **real Jira/Confluence/Figma links**.
 
 ### 4.7. Team Management (lead) & Admin → Users (admin)
-- **Team** (lead): gán/bỏ tester vào đội mình quản lý.
-- **Admin → Users** (admin): tạo/sửa user, đổi vai trò, reset mật khẩu.
+- **Team** (lead): assign/remove testers from the team they manage.
+- **Admin → Users** (admin): create/edit users, change roles, reset passwords.
 
 ### 4.8. Integrations
-- Trang **Integrations** kiểm tra trạng thái kết nối Jira/Confluence/Figma và cấu hình token.
+- The **Integrations** page checks the connection status of Jira/Confluence/Figma and configures tokens.
 
 ---
 
-## 5. Bộ dữ liệu mẫu — Dự án "E-commerce Platform"
+## 5. Sample dataset — the "E-commerce Platform" project
 
-Bộ data đã được làm phong phú để demo: **8 Task**, **11 Sub-task**, **55 Test Case** (ở chế độ mock), trải đều mọi module, mức ưu tiên, trạng thái và kết quả. Gợi ý các điểm "ăn tiền" khi trình bày:
+The dataset has been enriched for demos: **8 Tasks**, **11 Sub-tasks**, **55 Test Cases** (in mock mode), spread evenly across every module, priority, status, and result. Suggested "money shots" when presenting:
 
-| Task | Trạng thái | Jira | Điểm nhấn khi demo |
+| Task | Status | Jira | Demo highlight |
 |---|---|---|---|
-| **Authentication** | In Progress | ECOM-12 | Có case **Fail** (đăng nhập sai trả 500) & **Blocked** (session timeout) |
-| **Cart & Checkout** | To Do | ECOM-20 | Case **Fail** cập nhật số lượng, **Blocked** thanh toán Stripe |
-| **Product Catalog & Search** | Done | ECOM-30 | Có sub-task Search & PDP; case **Fail** bộ lọc danh mục |
-| **Payment & Refund** | In Progress | ECOM-40 | **3-D Secure Fail**, **timeout Blocked**, hoàn tiền 1 phần **Fail** |
-| **Order Management & Shipping** | In Progress | ECOM-50 | Tính thuế đơn quốc tế **Fail**; có case **Chưa chạy** |
-| **Admin Dashboard** | To Do | ECOM-60 | Demo **phân quyền RBAC**; import CSV **Blocked**; xuất Excel **Skip** |
-| **Performance & Reliability** | In Progress | ECOM-70 | Module **Performance**: load test 1000 user **Fail** (P95 > 3s) |
-| **Mobile Responsive** | Done | ECOM-80 | Module **Mobile**: 3 case Pass trên màn hình 375px |
+| **Authentication** | In Progress | ECOM-12 | Has a **Fail** case (bad login returns 500) & a **Blocked** case (session timeout) |
+| **Cart & Checkout** | To Do | ECOM-20 | A **Fail** case on quantity update, a **Blocked** Stripe payment |
+| **Product Catalog & Search** | Done | ECOM-30 | Has Search & PDP sub-tasks; a **Fail** case on the category filter |
+| **Payment & Refund** | In Progress | ECOM-40 | **3-D Secure Fail**, **timeout Blocked**, partial refund **Fail** |
+| **Order Management & Shipping** | In Progress | ECOM-50 | International-order tax **Fail**; has a **Not run** case |
+| **Admin Dashboard** | To Do | ECOM-60 | Demos **RBAC permissions**; CSV import **Blocked**; Excel export **Skip** |
+| **Performance & Reliability** | In Progress | ECOM-70 | **Performance** module: 1000-user load test **Fail** (P95 > 3s) |
+| **Mobile Responsive** | Done | ECOM-80 | **Mobile** module: 3 Pass cases on a 375px screen |
 
-**Module xuất hiện trong data:** UI, API, DB, Security, Performance, Mobile.
-**Kết quả xuất hiện:** Pass ✅, Fail ❌, Blocked ⚠️, Skip ⏭️, và Chưa chạy (PENDING) → đủ để biểu đồ pie/trend trông sinh động. Các lần thực thi được rải trong ~5 ngày gần nhất nên **biểu đồ tỉ lệ pass theo ngày** có nhiều điểm.
-
----
-
-## 6. Kịch bản Demo gợi ý (~7 phút)
-
-1. **Đăng nhập** `demo@firegroup.io` / `password123` → vào **Dashboard**, chỉ vào tỉ lệ pass của "E-commerce Platform".
-2. Mở dự án → khoe **báo cáo & biểu đồ** (KPI, pie, trend, thống kê theo module).
-3. Vào **Task "Payment & Refund"** → mở case `TC_Payment_3DSecure` (Fail) → xem **lịch sử thực thi** và **lý do thất bại**.
-4. **Ghi nhận một kết quả mới**: chọn case `Chưa chạy` (vd `TC_Refund_InvoicePDF`) → bấm Pass → quay lại thấy **biểu đồ cập nhật ngay**.
-5. **Tạo nhanh 1 test case** với bảng Steps + tag chip để khoe form nhập liệu.
-6. **✨ Gen Testcase with AI** trên một task → preview danh sách AI đề xuất → chọn vài case để tạo.
-7. **Phân quyền**: đăng xuất, đăng nhập lại bằng `tester@firegroup.io` (hoặc tạo tài khoản `viewer`) → cho khách thấy nút tạo/sửa tự ẩn.
+**Modules present in the data:** UI, API, DB, Security, Performance, Mobile.
+**Results present:** Pass ✅, Fail ❌, Blocked ⚠️, Skip ⏭️, and Not run (PENDING) → enough to make the pie/trend charts look lively. Executions are spread over the last ~5 days, so the **daily pass-rate chart** has multiple data points.
 
 ---
 
-## 7. Nạp lại / quản trị dữ liệu mẫu
+## 6. Suggested demo script (~7 minutes)
 
-Chạy trong thư mục `backend/`:
+1. **Log in** as `demo@firegroup.io` / `password123` → go to the **Dashboard** and point out the pass rate of "E-commerce Platform".
+2. Open the project → show the **reports & charts** (KPIs, pie, trend, per-module stats).
+3. Open the **"Payment & Refund" Task** → open case `TC_Payment_3DSecure` (Fail) → review its **execution history** and **failure reason**.
+4. **Record a new result**: pick a `Not run` case (e.g. `TC_Refund_InvoicePDF`) → click Pass → go back and see the **charts update immediately**.
+5. **Quickly create a test case** with a Steps table + tag chips to show off the input form.
+6. **✨ Gen Testcase with AI** on a task → preview the AI's suggested list → select a few cases to create.
+7. **Permissions**: log out, log back in as `tester@firegroup.io` (or create a `viewer` account) → show the customer how the create/edit buttons hide automatically.
 
-| Lệnh | Tác dụng |
+---
+
+## 7. Reloading / managing the sample data
+
+Run inside the `backend/` folder:
+
+| Command | Effect |
 |---|---|
-| `npm run seed` | Nạp dữ liệu gốc (chỉ chạy nếu chưa có dự án mẫu) |
-| `npm run seed:more` | Thêm bộ test case mở rộng cho Authentication & Cart |
-| `npm run seed:demo` | **Thêm bộ data demo phong phú trong tài liệu này** (6 task + sub-task + ~37 case) |
-| `npm run reseed` | Xoá sạch & nạp lại (chỉ chế độ mock) |
+| `npm run seed` | Load the base data (only runs if the sample project doesn't exist yet) |
+| `npm run seed:more` | Add the extended test-case set for Authentication & Cart |
+| `npm run seed:demo` | **Add the rich demo dataset described in this document** (6 tasks + sub-tasks + ~37 cases) |
+| `npm run reseed` | Wipe & reload (mock mode only) |
 
-Đặc điểm `seed:demo`:
-- **Idempotent**: chạy lại sẽ tự bỏ qua nếu data đã có (không nhân đôi).
-- **Chạy được cả 2 chế độ** — tự tôn trọng `DB_MODE`:
+Characteristics of `seed:demo`:
+- **Idempotent**: re-running skips automatically if the data already exists (no duplication).
+- **Works in both modes** — it respects `DB_MODE`:
   ```bash
-  DB_MODE=mock  npm run seed:demo                          # ghi JSON local
-  DB_MODE=sheets SEED_THROTTLE_MS=1300 npm run seed:demo   # ghi Google Sheets (giãn ghi để không vượt hạn mức)
+  DB_MODE=mock  npm run seed:demo                          # write to local JSON
+  DB_MODE=sheets SEED_THROTTLE_MS=1300 npm run seed:demo   # write to Google Sheets (throttled to stay under the quota)
   ```
 
-> File script: [backend/scripts/seedDemo.js](backend/scripts/seedDemo.js).
+> Script file: [backend/scripts/seedDemo.js](backend/scripts/seedDemo.js).
 
 ---
 
-## 8. Bảng giá trị tham chiếu (enum)
+## 8. Reference values (enums)
 
-| Nhóm | Giá trị hợp lệ |
+| Group | Valid values |
 |---|---|
-| Module | `UI`, `API`, `DB`, `Performance`, `Security` _(data demo bổ sung thêm `Mobile`)_ |
+| Module | `UI`, `API`, `DB`, `Performance`, `Security` _(the demo data adds `Mobile`)_ |
 | Priority | `CRITICAL`, `HIGH`, `MEDIUM`, `LOW` |
-| Trạng thái Test Case | `DRAFT`, `ACTIVE`, `DEPRECATED` |
-| Kết quả thực thi | `PASSED`, `FAILED`, `BLOCKED`, `SKIPPED` |
-| Trạng thái Task/Sub-task | `To Do`, `In Progress`, `Done` |
-| Trạng thái Dự án | `active`, `paused`, `archived` |
-| Vai trò | `admin`, `lead`, `tester`, `viewer` |
+| Test Case status | `DRAFT`, `ACTIVE`, `DEPRECATED` |
+| Execution result | `PASSED`, `FAILED`, `BLOCKED`, `SKIPPED` |
+| Task/Sub-task status | `To Do`, `In Progress`, `Done` |
+| Project status | `active`, `paused`, `archived` |
+| Role | `admin`, `lead`, `tester`, `viewer` |
 
 ---
 
-## 9. Xử lý sự cố thường gặp
+## 9. Common troubleshooting
 
-| Hiện tượng | Cách xử lý |
+| Symptom | How to fix |
 |---|---|
-| Đăng nhập báo sai mật khẩu | Mật khẩu seed mặc định là `password123`; hoặc chạy `npm run set:password` |
-| Không thấy dữ liệu vừa nạp | Kiểm tra `DB_MODE` trong [backend/.env](backend/.env) — mock và sheets là **2 kho tách biệt** |
-| Gen AI báo lỗi/không chạy | Thiếu `ANTHROPIC_API_KEY` trong `backend/.env`, hoặc token hết hạn |
-| Gen AI cảnh báo "không đọc được nguồn" | Link Confluence/Figma mẫu là `example.com`; dùng link thật hoặc cứ để AI sinh từ tên+mô tả |
-| Ghi Google Sheets bị lỗi quota/429 | Chạy lại `seed:demo` với `SEED_THROTTLE_MS=1500` để giãn nhịp ghi |
-| Frontend không gọi được API | Đảm bảo backend chạy ở `:4000` và `VITE_API_URL=/api` (Vite tự proxy sang 4000) |
+| Login reports a wrong password | The default seeded password is `password123`; or run `npm run set:password` |
+| Don't see the data you just loaded | Check `DB_MODE` in [backend/.env](backend/.env) — mock and sheets are **two separate stores** |
+| AI Gen errors out / won't run | Missing `ANTHROPIC_API_KEY` in `backend/.env`, or the token has expired |
+| AI Gen warns "could not read source" | The sample Confluence/Figma links are `example.com`; use real links, or just let the AI generate from the name + description |
+| Google Sheets write fails with quota/429 | Re-run `seed:demo` with `SEED_THROTTLE_MS=1500` to throttle the writes |
+| Frontend can't reach the API | Make sure the backend is running on `:4000` and `VITE_API_URL=/api` (Vite proxies to 4000 automatically) |
 
 ---
 
-*Cập nhật: 27/06/2026 · Dự án mẫu: E-commerce Platform.*
+*Updated: 2026-06-27 · Sample project: E-commerce Platform.*

@@ -96,12 +96,12 @@ export default function GenTestcasesModal({ open, onClose, projectId, taskId, su
         <div className="space-y-4">
           {available.length === 0 ? (
             <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              Task/subtask này chưa có link tài liệu nào (Jira / Confluence / Figma). Hãy thêm link rồi thử lại.
+              This task/subtask has no document links yet (Jira / Confluence / Figma). Add a link, then try again.
             </p>
           ) : (
             <>
               <div>
-                <label className="label">Nguồn tài liệu để AI đọc</label>
+                <label className="label">Document sources for the AI to read</label>
                 <div className="space-y-1">
                   {available.map((s) => (
                     <label key={s.key} className="flex items-center gap-2 text-sm">
@@ -114,13 +114,13 @@ export default function GenTestcasesModal({ open, onClose, projectId, taskId, su
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="label">Số lượng tối đa</label>
+                  <label className="label">Maximum count</label>
                   <input type="number" min="1" max="20" className="input" value={count} onChange={(e) => setCount(Number(e.target.value))} />
                 </div>
               </div>
               <div>
-                <label className="label">Hướng dẫn thêm (tùy chọn)</label>
-                <textarea rows={2} className="input" placeholder="vd: tập trung vào các case lỗi và phân quyền" value={instructions} onChange={(e) => setInstructions(e.target.value)} />
+                <label className="label">Additional instructions (optional)</label>
+                <textarea rows={2} className="input" placeholder="e.g. focus on error cases and authorization" value={instructions} onChange={(e) => setInstructions(e.target.value)} />
               </div>
             </>
           )}
@@ -128,9 +128,9 @@ export default function GenTestcasesModal({ open, onClose, projectId, taskId, su
           {error && <p className="field-error whitespace-pre-line">{error}</p>}
 
           <div className="flex justify-end gap-2 pt-2">
-            <button className="btn-secondary" onClick={onClose}>Hủy</button>
+            <button className="btn-secondary" onClick={onClose}>Cancel</button>
             <button className="btn-primary" disabled={genMut.isPending || sources.length === 0} onClick={onGenerate}>
-              {genMut.isPending ? 'Đang tạo… (có thể mất ~30s)' : 'Generate'}
+              {genMut.isPending ? 'Generating… (may take ~30s)' : 'Generate'}
             </button>
           </div>
         </div>
@@ -145,10 +145,10 @@ export default function GenTestcasesModal({ open, onClose, projectId, taskId, su
           )}
 
           {generated.length === 0 ? (
-            <p className="text-sm text-gray-500">AI không tạo được test case nào từ tài liệu đã chọn.</p>
+            <p className="text-sm text-gray-500">The AI could not generate any test cases from the selected documents.</p>
           ) : (
             <>
-              <p className="text-sm text-gray-600">AI đã đề xuất <strong>{generated.length}</strong> test case. Chọn những cái muốn lưu:</p>
+              <p className="text-sm text-gray-600">The AI suggested <strong>{generated.length}</strong> test case(s). Select the ones you want to save:</p>
               <div className="max-h-96 space-y-2 overflow-y-auto">
                 {generated.map((tc, i) => (
                   <label key={i} className="flex gap-2 rounded-md border border-gray-200 p-3 hover:bg-gray-50">
@@ -175,11 +175,11 @@ export default function GenTestcasesModal({ open, onClose, projectId, taskId, su
           {error && <p className="field-error whitespace-pre-line">{error}</p>}
 
           <div className="flex justify-between gap-2 pt-2">
-            <button className="btn-secondary" onClick={() => setStep('choose')} disabled={saving}>← Tạo lại</button>
+            <button className="btn-secondary" onClick={() => setStep('choose')} disabled={saving}>← Regenerate</button>
             <div className="flex gap-2">
-              <button className="btn-secondary" onClick={onClose} disabled={saving}>Đóng</button>
+              <button className="btn-secondary" onClick={onClose} disabled={saving}>Close</button>
               <button className="btn-primary" onClick={onSave} disabled={saving || selectedCount === 0}>
-                {saving ? 'Đang lưu…' : `Lưu ${selectedCount} test case`}
+                {saving ? 'Saving…' : `Save ${selectedCount} test case(s)`}
               </button>
             </div>
           </div>

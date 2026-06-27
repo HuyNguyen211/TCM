@@ -45,10 +45,10 @@ export default function TaskDetail() {
       {/* Test cases attached DIRECTLY to this task (no subtask) */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-700">Test Cases (trực tiếp trong task này)</h3>
+          <h3 className="text-sm font-semibold text-gray-700">Test Cases (directly under this task)</h3>
           {writeContent && <button className="btn-primary" onClick={() => setGenOpen(true)}>✨ Gen Testcase with AI</button>}
         </div>
-        <p className="text-xs text-gray-400">Test case không thuộc subtask nào. Test case của subtask nằm trong trang subtask.</p>
+        <p className="text-xs text-gray-400">Test cases that belong to no subtask. A subtask's test cases live on its subtask page.</p>
         <TestCaseList projectId={projectId} taskId={taskId} />
       </div>
 

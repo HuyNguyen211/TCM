@@ -64,7 +64,7 @@ async function buildContext(entity, sources) {
 export async function genTestcases(entity, { sources = [], count = 8, instructions = '' }) {
   const { contextText, used, warnings } = await buildContext(entity, sources);
   if (!contextText.trim()) {
-    return { testCases: [], used, warnings: [...warnings, 'Không có nội dung tài liệu nào để đọc.'] };
+    return { testCases: [], used, warnings: [...warnings, 'No document content available to read.'] };
   }
   const testCases = await generateTestCases({ contextText, count, instructions });
   return { testCases, used, warnings };

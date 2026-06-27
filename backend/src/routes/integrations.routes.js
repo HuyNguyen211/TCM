@@ -10,7 +10,7 @@ const router = Router();
 /** Probe a service: not-configured vs ok vs error — never throws. */
 async function probe(svc) {
   if (!svc.isConfigured()) {
-    return { configured: false, ok: false, message: 'Chưa cấu hình — thêm credentials vào backend/.env' };
+    return { configured: false, ok: false, message: 'Not configured — add credentials to backend/.env' };
   }
   try {
     const user = await svc.ping();
@@ -28,7 +28,7 @@ router.get(
     // AI: report config only (no live call to avoid token spend).
     const ai = aiConfigured()
       ? { configured: true, ok: true, model: env.ANTHROPIC_MODEL, authMode: aiAuthMode() }
-      : { configured: false, ok: false, message: 'Chưa cấu hình — thêm ANTHROPIC_API_KEY hoặc ANTHROPIC_AUTH_TOKEN vào backend/.env' };
+      : { configured: false, ok: false, message: 'Not configured — add ANTHROPIC_API_KEY or ANTHROPIC_AUTH_TOKEN to backend/.env' };
     res.json({ atlassian: atlassianStatus, figma: figmaStatus, ai });
   })
 );

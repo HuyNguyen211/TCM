@@ -6,7 +6,7 @@
  * Cart & Checkout, then a spread of test cases across modules
  * (UI / API / DB / Security / Performance / Mobile), priorities (CRITICAL..LOW),
  * task statuses (To Do / In Progress / Done) and execution results
- * (PASSED / FAILED / BLOCKED / SKIPPED + a few "Chưa chạy").
+ * (PASSED / FAILED / BLOCKED / SKIPPED + a few "Not run").
  *
  * Executions are dated over the last ~5 days so the pass-rate trend chart has
  * multiple points. A handful of tasks carry Jira / Confluence / Figma links so
@@ -165,7 +165,7 @@ async function main() {
   // =====================================================================
   const catalog = await mkTask({
     name: 'Product Catalog & Search',
-    description: 'Tìm kiếm, bộ lọc, sắp xếp và trang chi tiết sản phẩm.',
+    description: 'Search, filters, sorting and the product detail page.',
     status: 'Done',
     jiraKey: 'ECOM-30',
     confluenceUrl: 'https://confluence.example.com/display/ECOM/Catalog-Search',
@@ -175,38 +175,38 @@ async function main() {
   const subPdp = await mkSub(catalog.taskId, { name: 'Product Detail Page', status: 'Done', jiraKey: 'ECOM-30-2' });
 
   await mkTc({ name: 'TC_Search_Keyword', module: 'UI', priority: 'HIGH', tags: ['smoke', 'search'], taskId: catalog.taskId,
-    stepsJSON: steps(['Nhập từ khoá "áo thun" và bấm tìm', 'Hiện danh sách sản phẩm khớp từ khoá']),
+    stepsJSON: steps(['Enter the keyword "t-shirt" and click search', 'A list of products matching the keyword is shown']),
     result: 'PASSED', daysAgo: 2, duration: 22 });
   await mkTc({ name: 'TC_Search_NoResults', module: 'UI', priority: 'MEDIUM', tags: ['search', 'negative'], taskId: catalog.taskId,
-    stepsJSON: steps(['Tìm từ khoá không tồn tại "xyzzy123"', 'Hiện trạng thái "Không tìm thấy sản phẩm"']),
+    stepsJSON: steps(['Search for a non-existent keyword "xyzzy123"', 'Show the "No products found" empty state']),
     result: 'PASSED', daysAgo: 2, duration: 15 });
   await mkTc({ name: 'TC_Search_API_Pagination', module: 'API', priority: 'HIGH', tags: ['api', 'search'], taskId: catalog.taskId,
-    stepsJSON: steps(['GET /products?q=ao&page=2&size=20', 'Trả 200 + đúng 20 item của trang 2 + tổng số']),
+    stepsJSON: steps(['GET /products?q=ao&page=2&size=20', 'Returns 200 + exactly 20 items from page 2 + total count']),
     result: 'PASSED', daysAgo: 3, duration: 18 });
   await mkTc({ name: 'TC_Filter_ByPriceRange', module: 'UI', priority: 'MEDIUM', tags: ['search', 'regression'], taskId: catalog.taskId, subtaskId: subSearch.subtaskId,
-    stepsJSON: steps(['Lọc giá 100k–300k', 'Chỉ hiện sản phẩm trong khoảng giá']),
+    stepsJSON: steps(['Filter price 100k–300k', 'Only products within the price range are shown']),
     result: 'PASSED', daysAgo: 4, duration: 20 });
   await mkTc({ name: 'TC_Filter_ByCategory', module: 'UI', priority: 'MEDIUM', tags: ['search'], taskId: catalog.taskId, subtaskId: subSearch.subtaskId,
-    stepsJSON: steps(['Chọn danh mục "Giày", chuyển sang trang 2', 'Bộ lọc danh mục vẫn được giữ']),
-    result: 'FAILED', failureReason: 'Bộ lọc danh mục bị reset khi chuyển trang', daysAgo: 1, duration: 25 });
+    stepsJSON: steps(['Select the "Shoes" category, then go to page 2', 'The category filter is preserved']),
+    result: 'FAILED', failureReason: 'Category filter is reset when changing pages', daysAgo: 1, duration: 25 });
   await mkTc({ name: 'TC_Sort_ByPriceAsc', module: 'UI', priority: 'LOW', tags: ['search'], taskId: catalog.taskId, subtaskId: subSearch.subtaskId,
-    stepsJSON: steps(['Sắp xếp theo "Giá tăng dần"', 'Danh sách sắp đúng thứ tự giá']),
+    stepsJSON: steps(['Sort by "Price: low to high"', 'The list is ordered correctly by price']),
     result: 'PASSED', daysAgo: 4, duration: 12 });
   await mkTc({ name: 'TC_ProductDetail_Display', module: 'UI', priority: 'HIGH', tags: ['smoke'], taskId: catalog.taskId, subtaskId: subPdp.subtaskId,
-    stepsJSON: steps(['Mở trang chi tiết 1 sản phẩm', 'Hiện đủ tên, giá, ảnh, mô tả, nút mua']),
+    stepsJSON: steps(['Open the detail page of a product', 'Shows name, price, images, description and the buy button']),
     result: 'PASSED', daysAgo: 3, duration: 16 });
   await mkTc({ name: 'TC_ProductDetail_OutOfStock', module: 'UI', priority: 'MEDIUM', tags: ['negative'], taskId: catalog.taskId, subtaskId: subPdp.subtaskId,
-    stepsJSON: steps(['Mở sản phẩm đã hết hàng', 'Nút "Thêm vào giỏ" bị vô hiệu + nhãn "Hết hàng"']),
+    stepsJSON: steps(['Open an out-of-stock product', 'The "Add to cart" button is disabled + an "Out of stock" label']),
     result: 'PASSED', daysAgo: 5, duration: 14 });
   await mkTc({ name: 'TC_ProductImages_Gallery', module: 'UI', priority: 'LOW', tags: ['ui'], taskId: catalog.taskId, subtaskId: subPdp.subtaskId,
-    stepsJSON: steps(['Bấm vào ảnh thu nhỏ trong gallery', 'Ảnh lớn đổi tương ứng']) }); // Chưa chạy
+    stepsJSON: steps(['Click a thumbnail in the gallery', 'The main image changes accordingly']) }); // Not run
 
   // =====================================================================
   // Task B — Payment & Refund  (In Progress)
   // =====================================================================
   const payment = await mkTask({
     name: 'Payment & Refund',
-    description: 'Cổng thanh toán, 3-D Secure và quy trình hoàn tiền.',
+    description: 'Payment gateway, 3-D Secure and the refund process.',
     status: 'In Progress',
     jiraKey: 'ECOM-40',
     confluenceUrl: 'https://confluence.example.com/display/ECOM/Payment-Refund',
@@ -215,35 +215,35 @@ async function main() {
   const subRefund = await mkSub(payment.taskId, { name: 'Refund Processing', status: 'To Do', jiraKey: 'ECOM-40-2' });
 
   await mkTc({ name: 'TC_Payment_CreditCard', module: 'API', priority: 'CRITICAL', tags: ['payment', 'smoke'], taskId: payment.taskId,
-    stepsJSON: steps(['Thanh toán bằng thẻ Visa hợp lệ', '200 + đơn chuyển "Đã thanh toán"']),
+    stepsJSON: steps(['Pay with a valid Visa card', '200 + order moves to "Paid"']),
     result: 'PASSED', daysAgo: 1, duration: 28 });
   await mkTc({ name: 'TC_Payment_PayPal', module: 'API', priority: 'HIGH', tags: ['payment'], taskId: payment.taskId, subtaskId: subPayMethods.subtaskId,
-    stepsJSON: steps(['Chọn PayPal, đăng nhập sandbox và xác nhận', 'Quay về site với trạng thái thành công']),
+    stepsJSON: steps(['Choose PayPal, log into the sandbox and confirm', 'Returns to the site with a success status']),
     result: 'PASSED', daysAgo: 2, duration: 30 });
   await mkTc({ name: 'TC_Payment_COD', module: 'UI', priority: 'MEDIUM', tags: ['payment'], taskId: payment.taskId, subtaskId: subPayMethods.subtaskId,
-    stepsJSON: steps(['Chọn "Thanh toán khi nhận hàng" (COD)', 'Đặt đơn thành công, trạng thái "Chờ thu tiền"']),
+    stepsJSON: steps(['Choose "Cash on delivery" (COD)', 'Order placed successfully, status "Awaiting payment"']),
     result: 'PASSED', daysAgo: 3, duration: 20 });
   await mkTc({ name: 'TC_Payment_3DSecure', module: 'Security', priority: 'HIGH', tags: ['payment', 'security'], taskId: payment.taskId, subtaskId: subPayMethods.subtaskId,
-    stepsJSON: steps(['Thanh toán thẻ yêu cầu xác thực 3-D Secure', 'Hiện màn OTP và xác thực thành công']),
-    result: 'FAILED', failureReason: 'Redirect 3-D Secure trả về trang trắng', daysAgo: 1, duration: 40 });
+    stepsJSON: steps(['Pay with a card that requires 3-D Secure authentication', 'The OTP screen appears and authentication succeeds']),
+    result: 'FAILED', failureReason: '3-D Secure redirect returns a blank page', daysAgo: 1, duration: 40 });
   await mkTc({ name: 'TC_Payment_Timeout', module: 'API', priority: 'HIGH', tags: ['payment', 'negative'], taskId: payment.taskId,
-    stepsJSON: steps(['Giả lập cổng thanh toán timeout', 'Đơn về trạng thái "Thanh toán lỗi", không trừ tiền']),
-    result: 'BLOCKED', notes: 'Cổng thanh toán sandbox đang bảo trì', daysAgo: 2, duration: 0 });
+    stepsJSON: steps(['Simulate a payment gateway timeout', 'Order moves to "Payment failed" status, no money is charged']),
+    result: 'BLOCKED', notes: 'Payment gateway sandbox is under maintenance', daysAgo: 2, duration: 0 });
   await mkTc({ name: 'TC_Refund_FullAmount', module: 'API', priority: 'HIGH', tags: ['refund'], taskId: payment.taskId, subtaskId: subRefund.subtaskId,
-    stepsJSON: steps(['Hoàn tiền toàn bộ 1 đơn đã thanh toán', '200 + đơn chuyển "Đã hoàn tiền", đúng số tiền']),
+    stepsJSON: steps(['Fully refund a paid order', '200 + order moves to "Refunded", correct amount']),
     result: 'PASSED', daysAgo: 4, duration: 22 });
   await mkTc({ name: 'TC_Refund_Partial', module: 'API', priority: 'MEDIUM', tags: ['refund'], taskId: payment.taskId, subtaskId: subRefund.subtaskId,
-    stepsJSON: steps(['Hoàn tiền 1 phần (1/3 sản phẩm)', 'Tổng đơn còn lại tính đúng']),
-    result: 'FAILED', failureReason: 'Hoàn tiền 1 phần làm sai tổng đơn còn lại', daysAgo: 2, duration: 26 });
+    stepsJSON: steps(['Partially refund (1 of 3 items)', 'The remaining order total is calculated correctly']),
+    result: 'FAILED', failureReason: 'Partial refund miscalculates the remaining order total', daysAgo: 2, duration: 26 });
   await mkTc({ name: 'TC_Refund_InvoicePDF', module: 'UI', priority: 'LOW', tags: ['refund'], taskId: payment.taskId, subtaskId: subRefund.subtaskId,
-    stepsJSON: steps(['Tải hoá đơn PDF sau khi hoàn tiền', 'PDF hiển thị đúng số tiền đã hoàn']) }); // Chưa chạy
+    stepsJSON: steps(['Download the PDF invoice after a refund', 'The PDF shows the correct refunded amount']) }); // Not run
 
   // =====================================================================
   // Task C — Order Management & Shipping  (In Progress)
   // =====================================================================
   const orders = await mkTask({
     name: 'Order Management & Shipping',
-    description: 'Đặt đơn, huỷ đơn, theo dõi vận chuyển và tính phí ship.',
+    description: 'Placing orders, cancelling orders, shipment tracking and shipping fee calculation.',
     status: 'In Progress',
     jiraKey: 'ECOM-50',
   });
@@ -251,35 +251,35 @@ async function main() {
   const subShipping = await mkSub(orders.taskId, { name: 'Shipping Calculator', status: 'To Do', jiraKey: 'ECOM-50-2' });
 
   await mkTc({ name: 'TC_Order_PlaceOrder_E2E', module: 'API', priority: 'CRITICAL', tags: ['smoke', 'e2e'], taskId: orders.taskId,
-    stepsJSON: steps(['Thêm hàng → checkout → thanh toán', 'Tạo đơn thành công + sinh orderId']),
+    stepsJSON: steps(['Add items → checkout → pay', 'Order created successfully + orderId generated']),
     result: 'PASSED', daysAgo: 1, duration: 35 });
   await mkTc({ name: 'TC_Order_CancelBeforeShip', module: 'API', priority: 'HIGH', tags: ['regression'], taskId: orders.taskId,
-    stepsJSON: steps(['Huỷ đơn khi chưa giao', 'Đơn chuyển "Đã huỷ", hoàn kho']),
+    stepsJSON: steps(['Cancel an order before it ships', 'Order moves to "Cancelled", stock is restored']),
     result: 'PASSED', daysAgo: 3, duration: 19 });
   await mkTc({ name: 'TC_Order_History_Pagination', module: 'UI', priority: 'LOW', tags: ['ui'], taskId: orders.taskId,
-    stepsJSON: steps(['Mở "Đơn hàng của tôi", chuyển trang', 'Phân trang hoạt động, hiện đúng đơn']),
+    stepsJSON: steps(['Open "My orders", change pages', 'Pagination works and shows the correct orders']),
     result: 'PASSED', daysAgo: 5, duration: 13 });
   await mkTc({ name: 'TC_Order_Tracking_StatusUpdate', module: 'UI', priority: 'MEDIUM', tags: ['tracking'], taskId: orders.taskId, subtaskId: subTracking.subtaskId,
-    stepsJSON: steps(['Theo dõi đơn đang giao', 'Hiện đúng mốc trạng thái vận chuyển']),
+    stepsJSON: steps(['Track an order in transit', 'The correct shipping status milestones are shown']),
     result: 'PASSED', daysAgo: 2, duration: 17 });
   await mkTc({ name: 'TC_Order_Tracking_InvalidCode', module: 'UI', priority: 'MEDIUM', tags: ['tracking', 'negative'], taskId: orders.taskId, subtaskId: subTracking.subtaskId,
-    stepsJSON: steps(['Nhập mã vận đơn không hợp lệ', 'Báo lỗi "Không tìm thấy đơn"']),
+    stepsJSON: steps(['Enter an invalid tracking number', 'Show the "Order not found" error']),
     result: 'PASSED', daysAgo: 4, duration: 11 });
   await mkTc({ name: 'TC_Shipping_Domestic_Calc', module: 'API', priority: 'MEDIUM', tags: ['shipping'], taskId: orders.taskId, subtaskId: subShipping.subtaskId,
-    stepsJSON: steps(['Tính phí ship nội thành theo cân nặng', 'Trả phí đúng bảng giá']),
+    stepsJSON: steps(['Calculate domestic shipping fee by weight', 'Returns the correct fee per the rate table']),
     result: 'PASSED', daysAgo: 3, duration: 16 });
   await mkTc({ name: 'TC_Shipping_International_Tax', module: 'API', priority: 'HIGH', tags: ['shipping'], taskId: orders.taskId, subtaskId: subShipping.subtaskId,
-    stepsJSON: steps(['Tính phí + thuế cho đơn quốc tế', 'Phí ship và thuế nhập khẩu tính đúng']),
-    result: 'FAILED', failureReason: 'Thuế nhập khẩu tính sai cho đơn quốc tế', daysAgo: 1, duration: 21 });
+    stepsJSON: steps(['Calculate fee + tax for an international order', 'Shipping fee and import tax are calculated correctly']),
+    result: 'FAILED', failureReason: 'Import tax is calculated incorrectly for international orders', daysAgo: 1, duration: 21 });
   await mkTc({ name: 'TC_Shipping_FreeOverThreshold', module: 'API', priority: 'LOW', tags: ['shipping'], taskId: orders.taskId, subtaskId: subShipping.subtaskId,
-    stepsJSON: steps(['Đơn > 500k', 'Được miễn phí vận chuyển']) }); // Chưa chạy
+    stepsJSON: steps(['Order > 500k', 'Qualifies for free shipping']) }); // Not run
 
   // =====================================================================
   // Task D — Admin Dashboard  (To Do)
   // =====================================================================
   const admin = await mkTask({
     name: 'Admin Dashboard',
-    description: 'Quản lý kho, phân quyền và báo cáo doanh số.',
+    description: 'Inventory management, access control and sales reporting.',
     status: 'To Do',
     jiraKey: 'ECOM-60',
     confluenceUrl: 'https://confluence.example.com/display/ECOM/Admin-Dashboard',
@@ -288,62 +288,62 @@ async function main() {
   const subReports = await mkSub(admin.taskId, { name: 'Sales Reports', status: 'To Do', jiraKey: 'ECOM-60-2' });
 
   await mkTc({ name: 'TC_Admin_RBAC_AccessControl', module: 'Security', priority: 'CRITICAL', tags: ['security', 'rbac'], taskId: admin.taskId,
-    stepsJSON: steps(['Đăng nhập bằng tài khoản "viewer" rồi mở trang Admin', 'Bị chặn 403, không vào được']),
+    stepsJSON: steps(['Log in with a "viewer" account and open the Admin page', 'Blocked with 403, cannot enter']),
     result: 'PASSED', daysAgo: 2, duration: 24 });
   await mkTc({ name: 'TC_Inventory_UpdateStock', module: 'DB', priority: 'HIGH', tags: ['db', 'inventory'], taskId: admin.taskId, subtaskId: subInventory.subtaskId,
-    stepsJSON: steps(['Cập nhật tồn kho 1 sản phẩm', 'DB lưu đúng số lượng mới']),
+    stepsJSON: steps(['Update the stock of a product', 'The DB stores the correct new quantity']),
     result: 'PASSED', daysAgo: 3, duration: 18 });
   await mkTc({ name: 'TC_Inventory_LowStockAlert', module: 'UI', priority: 'MEDIUM', tags: ['inventory'], taskId: admin.taskId, subtaskId: subInventory.subtaskId,
-    stepsJSON: steps(['Tồn kho xuống dưới ngưỡng', 'Hiện cảnh báo "Sắp hết hàng"']) }); // Chưa chạy
+    stepsJSON: steps(['Stock drops below the threshold', 'Show a "Low stock" warning']) }); // Not run
   await mkTc({ name: 'TC_Inventory_BulkImport_CSV', module: 'API', priority: 'HIGH', tags: ['performance', 'inventory'], taskId: admin.taskId, subtaskId: subInventory.subtaskId,
-    stepsJSON: steps(['Import 10.000 dòng sản phẩm từ CSV', 'Xử lý xong < 60s, không lỗi']),
-    result: 'BLOCKED', notes: 'Chưa có file CSV mẫu từ team Backend', daysAgo: 4, duration: 0 });
+    stepsJSON: steps(['Import 10,000 product rows from CSV', 'Finishes in < 60s, no errors']),
+    result: 'BLOCKED', notes: 'No sample CSV file from the Backend team yet', daysAgo: 4, duration: 0 });
   await mkTc({ name: 'TC_Report_SalesByDay', module: 'UI', priority: 'MEDIUM', tags: ['report'], taskId: admin.taskId, subtaskId: subReports.subtaskId,
-    stepsJSON: steps(['Mở báo cáo doanh số theo ngày', 'Biểu đồ hiện đúng số liệu']),
+    stepsJSON: steps(['Open the daily sales report', 'The chart shows the correct figures']),
     result: 'PASSED', daysAgo: 1, duration: 20 });
   await mkTc({ name: 'TC_Report_ExportExcel', module: 'API', priority: 'LOW', tags: ['report'], taskId: admin.taskId, subtaskId: subReports.subtaskId,
-    stepsJSON: steps(['Xuất báo cáo ra Excel', 'File .xlsx tải về đúng dữ liệu']),
-    result: 'SKIPPED', notes: 'Hoãn sang sprint sau', daysAgo: 0, duration: 0 });
+    stepsJSON: steps(['Export the report to Excel', 'The downloaded .xlsx file has the correct data']),
+    result: 'SKIPPED', notes: 'Deferred to a later sprint', daysAgo: 0, duration: 0 });
 
   // =====================================================================
   // Task E — Performance & Reliability  (In Progress)
   // =====================================================================
   const perf = await mkTask({
     name: 'Performance & Reliability',
-    description: 'Kiểm thử hiệu năng và chịu tải các luồng quan trọng.',
+    description: 'Performance and load testing of the critical flows.',
     status: 'In Progress',
     jiraKey: 'ECOM-70',
   });
   const subLoad = await mkSub(perf.taskId, { name: 'Load & Stress Testing', status: 'In Progress', jiraKey: 'ECOM-70-1' });
 
   await mkTc({ name: 'TC_Perf_Homepage_TTFB', module: 'Performance', priority: 'HIGH', tags: ['performance'], taskId: perf.taskId,
-    stepsJSON: steps(['Đo TTFB trang chủ', 'TTFB < 500ms ở điều kiện bình thường']),
+    stepsJSON: steps(['Measure homepage TTFB', 'TTFB < 500ms under normal conditions']),
     result: 'PASSED', daysAgo: 2, duration: 50 });
   await mkTc({ name: 'TC_Perf_Checkout_1000VUsers', module: 'Performance', priority: 'CRITICAL', tags: ['performance', 'load'], taskId: perf.taskId, subtaskId: subLoad.subtaskId,
-    stepsJSON: steps(['Chạy 1000 virtual user vào luồng checkout', 'P95 latency < 3s, lỗi < 1%']),
-    result: 'FAILED', failureReason: 'P95 latency vượt 3s khi 1000 user đồng thời', daysAgo: 1, duration: 120 });
+    stepsJSON: steps(['Run 1000 virtual users through the checkout flow', 'P95 latency < 3s, errors < 1%']),
+    result: 'FAILED', failureReason: 'P95 latency exceeds 3s with 1000 concurrent users', daysAgo: 1, duration: 120 });
   await mkTc({ name: 'TC_Perf_Search_StressTest', module: 'Performance', priority: 'HIGH', tags: ['performance', 'load'], taskId: perf.taskId, subtaskId: subLoad.subtaskId,
-    stepsJSON: steps(['Stress test API tìm kiếm', 'Không sập, suy giảm hiệu năng có kiểm soát']) }); // Chưa chạy
+    stepsJSON: steps(['Stress test the search API', 'Does not crash, degrades gracefully']) }); // Not run
 
   // =====================================================================
   // Task F — Mobile Responsive  (Done)
   // =====================================================================
   const mobile = await mkTask({
     name: 'Mobile Responsive',
-    description: 'Trải nghiệm responsive trên thiết bị di động.',
+    description: 'Responsive experience on mobile devices.',
     status: 'Done',
     jiraKey: 'ECOM-80',
     figmaUrl: 'https://figma.com/file/mobile/Responsive-Spec',
   });
 
   await mkTc({ name: 'TC_Mobile_Checkout_Flow', module: 'Mobile', priority: 'HIGH', tags: ['mobile', 'smoke'], taskId: mobile.taskId,
-    stepsJSON: steps(['Thực hiện checkout trên màn 375px', 'Luồng hoàn tất, không vỡ layout']),
+    stepsJSON: steps(['Complete checkout on a 375px screen', 'The flow completes without breaking the layout']),
     result: 'PASSED', daysAgo: 3, duration: 28 });
   await mkTc({ name: 'TC_Mobile_Cart_Responsive', module: 'Mobile', priority: 'MEDIUM', tags: ['mobile'], taskId: mobile.taskId,
-    stepsJSON: steps(['Mở giỏ hàng trên điện thoại', 'Hiển thị gọn, thao tác được mọi nút']),
+    stepsJSON: steps(['Open the cart on a phone', 'Displays compactly, every button is usable']),
     result: 'PASSED', daysAgo: 4, duration: 15 });
   await mkTc({ name: 'TC_Mobile_Menu_Hamburger', module: 'Mobile', priority: 'LOW', tags: ['mobile', 'ui'], taskId: mobile.taskId,
-    stepsJSON: steps(['Bấm menu hamburger trên mobile', 'Menu trượt ra, điều hướng đúng']),
+    stepsJSON: steps(['Tap the hamburger menu on mobile', 'The menu slides out and navigates correctly']),
     result: 'PASSED', daysAgo: 5, duration: 9 });
 
   // --- recompute project rollup so totalCases / passRate are fresh ---

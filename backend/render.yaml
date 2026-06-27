@@ -22,7 +22,7 @@ services:
         sync: false # paste the raw service-account JSON
       # ---- Integrations (optional — power the Integrations page) ----
       # All secrets: sync:false keeps them out of the repo; set the values in the
-      # Render dashboard (Environment). Any one left blank => "Chưa cấu hình".
+      # Render dashboard (Environment). Any one left blank => "Not configured".
       # Atlassian (Jira) — token: https://id.atlassian.com/manage-profile/security/api-tokens
       - key: ATLASSIAN_BASE_URL
         sync: false # e.g. https://your-site.atlassian.net

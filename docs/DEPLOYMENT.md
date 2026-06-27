@@ -31,7 +31,7 @@ Vercel (React/Vite)  ──HTTPS──>  Render (Express API)  ──Sheets API�
    **Integration variables (optional)** — these power the **Integrations** page and
    the "Gen Testcase with AI" button. They live **only** in the Render environment
    (the local `backend/.env` is gitignored and never deployed). Leave any blank and
-   that service shows **"Chưa cấu hình"**. Add all/any of:
+   that service shows **"Not configured"**. Add all/any of:
 
    | Key | Value |
    |---|---|
@@ -44,8 +44,8 @@ Vercel (React/Vite)  ──HTTPS──>  Render (Express API)  ──Sheets API�
 
    > **Server uses the API key**, not OAuth. `ANTHROPIC_AUTH_TOKEN` works locally but is
    > short-lived and **not auto-refreshed** — don't use it on a long-running server.
-   > After adding/changing these, redeploy (or restart) and hit **"↻ Test lại"** on the
-   > Integrations page; each should flip to **"Đã kết nối"**.
+   > After adding/changing these, redeploy (or restart) and hit **"↻ Re-test"** on the
+   > Integrations page; each should flip to **"Connected"**.
 
 4. Deploy. Then **run once** against the prod spreadsheet (Render shell, or locally with prod env):
    - `npm run setup:sheets` — provision/refresh tabs + headers.

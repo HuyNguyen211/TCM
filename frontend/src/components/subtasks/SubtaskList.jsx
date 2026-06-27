@@ -18,7 +18,7 @@ export default function SubtaskList({ projectId, taskId }) {
   const openCreate = () => { setEditing(null); setFormOpen(true); };
   const openEdit = (s) => { setEditing(s); setFormOpen(true); };
   const onDelete = (s) => {
-    if (window.confirm(`Xóa subtask "${s.subtaskName}"? Test case bên trong cũng bị xóa.`)) delMut.mutate(s.subtaskId);
+    if (window.confirm(`Delete subtask "${s.subtaskName}"? The test cases inside it will also be deleted.`)) delMut.mutate(s.subtaskId);
   };
 
   return (
@@ -31,7 +31,7 @@ export default function SubtaskList({ projectId, taskId }) {
       {isLoading && <Spinner />}
       {isError && <ErrorState message="Failed to load subtasks." />}
       {data && data.subtasks.length === 0 && (
-        <EmptyState title="Chưa có subtask" hint="Subtask là tùy chọn — bạn vẫn có thể thêm test case trực tiếp vào task bên dưới." />
+        <EmptyState title="No subtasks yet" hint="Subtasks are optional — you can still add test cases directly to the task below." />
       )}
 
       {data && data.subtasks.length > 0 && (
@@ -51,7 +51,7 @@ export default function SubtaskList({ projectId, taskId }) {
               <div className="flex items-center gap-2">
                 <Badge className={taskStatusBadge[s.status]}>{s.status}</Badge>
                 {writeContent && <button className="btn-secondary py-1" onClick={() => openEdit(s)}>Edit</button>}
-                {writeContent && <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(s)}>Xóa</button>}
+                {writeContent && <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(s)}>Delete</button>}
               </div>
             </div>
           ))}

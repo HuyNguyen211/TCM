@@ -66,7 +66,7 @@ Restart the backend. No tokens? The app still runs — integrations just report 
 ```json
 {
   "atlassian": { "configured": true, "ok": true, "user": { "name": "...", "email": "..." } },
-  "figma":     { "configured": false, "ok": false, "message": "Chưa cấu hình — thêm credentials vào backend/.env" }
+  "figma":     { "configured": false, "ok": false, "message": "Not configured — add credentials to backend/.env" }
 }
 ```
 

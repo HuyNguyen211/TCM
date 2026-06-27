@@ -48,7 +48,7 @@ export default function SubtaskDetail() {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-700">Test Cases trong subtask này</h3>
+          <h3 className="text-sm font-semibold text-gray-700">Test Cases in this subtask</h3>
           {writeContent && <button className="btn-primary" onClick={() => setGenOpen(true)}>✨ Gen Testcase with AI</button>}
         </div>
         <TestCaseList projectId={projectId} taskId={taskId} subtaskId={subtaskId} />

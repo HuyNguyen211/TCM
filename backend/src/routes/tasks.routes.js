@@ -115,7 +115,7 @@ router.post(
   validateBody(genTestcasesSchema),
   asyncHandler(async (req, res) => {
     if (!aiConfigured()) {
-      return res.status(400).json({ error: 'NotConfigured', message: 'AI chưa cấu hình — thêm ANTHROPIC_API_KEY hoặc ANTHROPIC_AUTH_TOKEN vào backend/.env' });
+      return res.status(400).json({ error: 'NotConfigured', message: 'AI not configured — add ANTHROPIC_API_KEY or ANTHROPIC_AUTH_TOKEN to backend/.env' });
     }
     const task = await findById('TASKS', req.params.taskId);
     if (!task || task.projectId !== req.params.projectId) {

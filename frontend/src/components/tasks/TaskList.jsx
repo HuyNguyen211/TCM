@@ -19,7 +19,7 @@ export default function TaskList({ projectId }) {
   const openEdit = (t) => { setEditing(t); setFormOpen(true); };
 
   const onDelete = (t) => {
-    if (window.confirm(`Xóa task "${t.taskName}"? Toàn bộ subtask và test case bên trong cũng bị xóa.`)) {
+    if (window.confirm(`Delete task "${t.taskName}"? All subtasks and test cases inside it will also be deleted.`)) {
       delMut.mutate(t.taskId);
     }
   };
@@ -27,7 +27,7 @@ export default function TaskList({ projectId }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">Tasks {data ? `(${data.total})` : ''} — sẽ link Jira sau</p>
+        <p className="text-sm text-gray-500">Tasks {data ? `(${data.total})` : ''} — Jira linking coming soon</p>
         {writeContent && <button className="btn-primary" onClick={openCreate}>+ New Task</button>}
       </div>
 
@@ -35,7 +35,7 @@ export default function TaskList({ projectId }) {
       {isError && <ErrorState message="Failed to load tasks." />}
 
       {data && data.tasks.length === 0 && (
-        <EmptyState title="Chưa có task nào" hint="Tạo task đầu tiên để bắt đầu (test case nằm trong task/subtask)."
+        <EmptyState title="No tasks yet" hint="Create your first task to get started (test cases live inside tasks/subtasks)."
           action={writeContent ? <button className="btn-primary" onClick={openCreate}>+ New Task</button> : null} />
       )}
 
@@ -58,9 +58,9 @@ export default function TaskList({ projectId }) {
                 {t.assignee && <span>· {t.assignee}</span>}
               </div>
               <div className="mt-3 flex gap-2">
-                <Link to={`/projects/${projectId}/tasks/${t.taskId}`} className="btn-secondary py-1">Mở</Link>
+                <Link to={`/projects/${projectId}/tasks/${t.taskId}`} className="btn-secondary py-1">Open</Link>
                 {writeContent && <button className="btn-secondary py-1" onClick={() => openEdit(t)}>Edit</button>}
-                {writeContent && <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(t)}>Xóa</button>}
+                {writeContent && <button className="btn-secondary py-1 text-red-600" onClick={() => onDelete(t)}>Delete</button>}
               </div>
             </div>
           ))}

@@ -32,7 +32,7 @@ export default function TestCaseDetail() {
             <h1 className="text-2xl font-bold">{tc.testCaseName}</h1>
             <Badge className={priorityBadge[tc.priority]}>{tc.priority}</Badge>
             <Badge className={tcStatusBadge[tc.status]}>{tc.status}</Badge>
-            <span className="badge bg-gray-100 text-gray-600" title="Version (tăng mỗi lần sửa)">v{tc.version}</span>
+            <span className="badge bg-gray-100 text-gray-600" title="Version (increments on each edit)">v{tc.version}</span>
           </div>
           {writeContent && (
             <div className="flex gap-2">
@@ -44,11 +44,11 @@ export default function TestCaseDetail() {
 
         {/* Latest execution result — updated via "Record Execution", not editable directly. */}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-sm font-medium text-gray-600">Kết quả gần nhất:</span>
+          <span className="text-sm font-medium text-gray-600">Latest result:</span>
           {latestResult
             ? <Badge className={execStatusBadge[latestResult]}>{latestResult}</Badge>
-            : <Badge className="bg-slate-100 text-slate-500">Chưa chạy</Badge>}
-          <span className="text-xs text-gray-400">— bấm “Record Execution” để ghi kết quả mới (Pass / Fail / Blocked / Skip).</span>
+            : <Badge className="bg-slate-100 text-slate-500">Not run</Badge>}
+          <span className="text-xs text-gray-400">— click “Record Execution” to log a new result (Pass / Fail / Blocked / Skip).</span>
         </div>
         <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-600">
           <span>Module: <strong>{tc.module}</strong></span>
