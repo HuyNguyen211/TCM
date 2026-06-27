@@ -5,7 +5,8 @@ import { useExecutions } from '../hooks/useExecutions.js';
 import { useCan } from '../hooks/useCan.js';
 import { priorityBadge, tcStatusBadge, execStatusBadge } from '../lib/constants.js';
 import Badge from '../components/common/Badge.jsx';
-import { Spinner, ErrorState } from '../components/common/States.jsx';
+import { ErrorState } from '../components/common/States.jsx';
+import { DetailSkeleton } from '../components/common/Skeleton.jsx';
 import TestCaseForm from '../components/testcases/TestCaseForm.jsx';
 import ExecutionForm from '../components/execution/ExecutionForm.jsx';
 
@@ -17,7 +18,7 @@ export default function TestCaseDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [execOpen, setExecOpen] = useState(false);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <DetailSkeleton />;
   if (isError || !tc) return <ErrorState message="Test case not found." />;
 
   const executions = execData?.executions || [];

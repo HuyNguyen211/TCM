@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useTeam, useAddTeamMember, useRemoveTeamMember } from '../hooks/useTeam.js';
 import { apiErrorMessage } from '../lib/api.js';
-import { Spinner, ErrorState, EmptyState } from '../components/common/States.jsx';
+import { ErrorState, EmptyState } from '../components/common/States.jsx';
+import { SkeletonCards } from '../components/common/Skeleton.jsx';
 
 export default function TeamManagement() {
   const { data, isLoading, isError } = useTeam();
@@ -29,7 +30,7 @@ export default function TeamManagement() {
       </div>
 
       {actionError && <ErrorState message={actionError} />}
-      {isLoading && <Spinner />}
+      {isLoading && <SkeletonCards count={2} lines={4} cols={2} />}
       {isError && <ErrorState message="Failed to load your team." />}
 
       {data && (

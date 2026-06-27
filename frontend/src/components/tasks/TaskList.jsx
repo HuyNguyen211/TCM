@@ -5,7 +5,8 @@ import { useCan } from '../../hooks/useCan.js';
 import { taskStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
 import JiraBadge from '../common/JiraBadge.jsx';
-import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
+import { ErrorState, EmptyState } from '../common/States.jsx';
+import { SkeletonCards } from '../common/Skeleton.jsx';
 import TaskForm from './TaskForm.jsx';
 
 export default function TaskList({ projectId }) {
@@ -31,7 +32,7 @@ export default function TaskList({ projectId }) {
         {writeContent && <button className="btn-primary" onClick={openCreate}>+ New Task</button>}
       </div>
 
-      {isLoading && <Spinner />}
+      {isLoading && <SkeletonCards count={4} lines={2} cols={2} />}
       {isError && <ErrorState message="Failed to load tasks." />}
 
       {data && data.tasks.length === 0 && (

@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { roleBadge } from '../lib/constants.js';
 import { apiErrorMessage } from '../lib/api.js';
 import Badge from '../components/common/Badge.jsx';
-import { Spinner, ErrorState, EmptyState } from '../components/common/States.jsx';
+import { ErrorState, EmptyState } from '../components/common/States.jsx';
+import { SkeletonTable } from '../components/common/Skeleton.jsx';
 import UserForm from '../components/users/UserForm.jsx';
 import ResetPasswordModal from '../components/users/ResetPasswordModal.jsx';
 
@@ -51,7 +52,7 @@ export default function AdminUsers() {
 
       {actionError && <ErrorState message={actionError} />}
 
-      {isLoading && <Spinner />}
+      {isLoading && <SkeletonTable rows={5} cols={5} />}
       {isError && <ErrorState message="Failed to load users." />}
 
       {data && users.length === 0 && (

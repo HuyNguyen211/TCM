@@ -4,7 +4,8 @@ import { useTask } from '../hooks/useTasks.js';
 import { useCan } from '../hooks/useCan.js';
 import { taskStatusBadge } from '../lib/constants.js';
 import Badge from '../components/common/Badge.jsx';
-import { Spinner, ErrorState } from '../components/common/States.jsx';
+import { ErrorState } from '../components/common/States.jsx';
+import { DetailSkeleton } from '../components/common/Skeleton.jsx';
 import TaskForm from '../components/tasks/TaskForm.jsx';
 import SubtaskList from '../components/subtasks/SubtaskList.jsx';
 import TestCaseList from '../components/testcases/TestCaseList.jsx';
@@ -19,7 +20,7 @@ export default function TaskDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [genOpen, setGenOpen] = useState(false);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <DetailSkeleton />;
   if (isError || !task) return <ErrorState message="Task not found." />;
 
   return (

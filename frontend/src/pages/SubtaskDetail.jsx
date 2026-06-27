@@ -5,7 +5,8 @@ import { useSubtask } from '../hooks/useSubtasks.js';
 import { useCan } from '../hooks/useCan.js';
 import { taskStatusBadge } from '../lib/constants.js';
 import Badge from '../components/common/Badge.jsx';
-import { Spinner, ErrorState } from '../components/common/States.jsx';
+import { ErrorState } from '../components/common/States.jsx';
+import { DetailSkeleton } from '../components/common/Skeleton.jsx';
 import SubtaskForm from '../components/subtasks/SubtaskForm.jsx';
 import TestCaseList from '../components/testcases/TestCaseList.jsx';
 import ResourceLinks from '../components/common/ResourceLinks.jsx';
@@ -20,7 +21,7 @@ export default function SubtaskDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [genOpen, setGenOpen] = useState(false);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <DetailSkeleton />;
   if (isError || !subtask) return <ErrorState message="Subtask not found." />;
 
   return (

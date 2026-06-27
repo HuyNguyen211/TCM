@@ -4,7 +4,8 @@ import { useTestCases, useDeleteTestCase } from '../../hooks/useTestCases.js';
 import { useCan } from '../../hooks/useCan.js';
 import { MODULES, PRIORITIES, TESTCASE_STATUS, priorityBadge, tcStatusBadge, execStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
-import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
+import { ErrorState, EmptyState } from '../common/States.jsx';
+import { SkeletonTable } from '../common/Skeleton.jsx';
 import TestCaseForm from './TestCaseForm.jsx';
 
 const PAGE = 25;
@@ -65,7 +66,7 @@ export default function TestCaseList({ projectId, taskId, subtaskId }) {
         {writeContent && <button className="btn-primary" onClick={openCreate}>+ New Test Case</button>}
       </div>
 
-      {isLoading && <Spinner />}
+      {isLoading && <SkeletonTable rows={5} cols={7} />}
       {isError && <ErrorState message="Failed to load test cases." />}
 
       {data && data.testCases.length === 0 && (

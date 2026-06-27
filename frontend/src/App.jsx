@@ -1,42 +1,53 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
-import Login from './pages/Login.jsx';
-import Signup from './pages/Signup.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import AdminUsers from './pages/AdminUsers.jsx';
-import TeamManagement from './pages/TeamManagement.jsx';
-import ProjectView from './pages/ProjectView.jsx';
-import Integrations from './pages/Integrations.jsx';
-import TaskDetail from './pages/TaskDetail.jsx';
-import SubtaskDetail from './pages/SubtaskDetail.jsx';
-import TestCaseDetail from './pages/TestCaseDetail.jsx';
+import {
+  AuthSkeleton,
+  DashboardSkeleton,
+  ListPageSkeleton,
+  ProjectViewSkeleton,
+  DetailSkeleton,
+  IntegrationsSkeleton,
+  TeamSkeleton,
+} from './components/common/Skeleton.jsx';
+
+// Route-level code splitting: each page downloads on first visit, then caches.
+const Login = lazy(() => import('./pages/Login.jsx'));
+const Signup = lazy(() => import('./pages/Signup.jsx'));
+const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
+const AdminUsers = lazy(() => import('./pages/AdminUsers.jsx'));
+const TeamManagement = lazy(() => import('./pages/TeamManagement.jsx'));
+const ProjectView = lazy(() => import('./pages/ProjectView.jsx'));
+const Integrations = lazy(() => import('./pages/Integrations.jsx'));
+const TaskDetail = lazy(() => import('./pages/TaskDetail.jsx'));
+const SubtaskDetail = lazy(() => import('./pages/SubtaskDetail.jsx'));
+const TestCaseDetail = lazy(() => import('./pages/TestCaseDetail.jsx'));
+
+/** Wrap a lazy element with a page-matched skeleton while its chunk loads. */
+const page = (el, fallback) => <Suspense fallback={fallback}>{el}</Suspense>;
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={page(<Login />, <AuthSkeleton />)} />
+      <Route path="/signup" element={page(<Signup />, <AuthSkeleton />)} />
       <Route
         path="/"
         element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
+          <ProtectedRoute>{page(<Dashboard />, <DashboardSkeleton />)}</ProtectedRoute>
         }
       />
       <Route
         path="/integrations"
         element={
-          <ProtectedRoute>
-            <Integrations />
-          </ProtectedRoute>
+          <ProtectedRoute>{page(<Integrations />, <IntegrationsSkeleton />)}</ProtectedRoute>
         }
       />
       <Route
         path="/admin/users"
         element={
           <ProtectedRoute roles={['admin']}>
-            <AdminUsers />
+            {page(<AdminUsers />, <ListPageSkeleton />)}
           </ProtectedRoute>
         }
       />
@@ -44,40 +55,32 @@ export default function App() {
         path="/team"
         element={
           <ProtectedRoute roles={['lead', 'admin']}>
-            <TeamManagement />
+            {page(<TeamManagement />, <TeamSkeleton />)}
           </ProtectedRoute>
         }
       />
       <Route
         path="/projects/:projectId"
         element={
-          <ProtectedRoute>
-            <ProjectView />
-          </ProtectedRoute>
+          <ProtectedRoute>{page(<ProjectView />, <ProjectViewSkeleton />)}</ProtectedRoute>
         }
       />
       <Route
         path="/projects/:projectId/tasks/:taskId"
         element={
-          <ProtectedRoute>
-            <TaskDetail />
-          </ProtectedRoute>
+          <ProtectedRoute>{page(<TaskDetail />, <DetailSkeleton />)}</ProtectedRoute>
         }
       />
       <Route
         path="/projects/:projectId/tasks/:taskId/subtasks/:subtaskId"
         element={
-          <ProtectedRoute>
-            <SubtaskDetail />
-          </ProtectedRoute>
+          <ProtectedRoute>{page(<SubtaskDetail />, <DetailSkeleton />)}</ProtectedRoute>
         }
       />
       <Route
         path="/projects/:projectId/testcases/:testCaseId"
         element={
-          <ProtectedRoute>
-            <TestCaseDetail />
-          </ProtectedRoute>
+          <ProtectedRoute>{page(<TestCaseDetail />, <DetailSkeleton />)}</ProtectedRoute>
         }
       />
     </Routes>

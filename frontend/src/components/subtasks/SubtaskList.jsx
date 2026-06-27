@@ -5,7 +5,8 @@ import { useCan } from '../../hooks/useCan.js';
 import { taskStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
 import JiraBadge from '../common/JiraBadge.jsx';
-import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
+import { ErrorState, EmptyState } from '../common/States.jsx';
+import { SkeletonTable } from '../common/Skeleton.jsx';
 import SubtaskForm from './SubtaskForm.jsx';
 
 export default function SubtaskList({ projectId, taskId }) {
@@ -28,7 +29,7 @@ export default function SubtaskList({ projectId, taskId }) {
         {writeContent && <button className="btn-secondary" onClick={openCreate}>+ New Subtask</button>}
       </div>
 
-      {isLoading && <Spinner />}
+      {isLoading && <SkeletonTable rows={3} cols={2} />}
       {isError && <ErrorState message="Failed to load subtasks." />}
       {data && data.subtasks.length === 0 && (
         <EmptyState title="No subtasks yet" hint="Subtasks are optional — you can still add test cases directly to the task below." />

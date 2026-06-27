@@ -1,5 +1,6 @@
 import { useProjects } from '../hooks/useProjects.js';
 import ProjectList from '../components/projects/ProjectList.jsx';
+import { SkeletonKpis } from '../components/common/Skeleton.jsx';
 
 function Kpi({ label, value, suffix = '' }) {
   return (
@@ -12,7 +13,7 @@ function Kpi({ label, value, suffix = '' }) {
 
 export default function Dashboard() {
   // Pull a wide page to compute global KPIs across all projects.
-  const { data } = useProjects({ skip: 0, limit: 200 });
+  const { data, isLoading } = useProjects({ skip: 0, limit: 200 });
   const projects = data?.projects || [];
 
   const totalCases = projects.reduce((s, p) => s + (p.totalCases || 0), 0);
@@ -29,12 +30,16 @@ export default function Dashboard() {
         <p className="text-sm text-gray-500">Overview of all projects and test coverage.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Kpi label="Projects" value={projects.length} />
-        <Kpi label="Active" value={active} />
-        <Kpi label="Total cases" value={totalCases} />
-        <Kpi label="Avg pass rate" value={avgPass} suffix="%" />
-      </div>
+      {isLoading ? (
+        <SkeletonKpis count={4} />
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Kpi label="Projects" value={projects.length} />
+          <Kpi label="Active" value={active} />
+          <Kpi label="Total cases" value={totalCases} />
+          <Kpi label="Avg pass rate" value={avgPass} suffix="%" />
+        </div>
+      )}
 
       <ProjectList />
     </div>

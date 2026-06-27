@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useIntegrationStatus, fetchJiraIssue, fetchFigmaFile } from '../hooks/useIntegrations.js';
-import { Spinner } from '../components/common/States.jsx';
+import { SkeletonCards } from '../components/common/Skeleton.jsx';
 import Badge from '../components/common/Badge.jsx';
 import { apiErrorMessage } from '../lib/api.js';
 
@@ -85,7 +85,7 @@ export default function Integrations() {
         </button>
       </div>
 
-      {isLoading && <Spinner label="Checking connections…" />}
+      {isLoading && <SkeletonCards count={2} lines={4} cols={2} />}
       {isError && <p className="field-error">Could not reach /api/integrations/status</p>}
 
       {data && (

@@ -1,7 +1,9 @@
 import { useReport } from '../../hooks/useReports.js';
 import { execStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
-import { Spinner, ErrorState } from '../common/States.jsx';
+import { ErrorState } from '../common/States.jsx';
+import { ReportSkeleton } from '../common/Skeleton.jsx';
+import PassRateTrend from './PassRateTrend.jsx';
 
 function Kpi({ label, value, suffix = '', tone = 'text-gray-900' }) {
   return (
@@ -33,7 +35,7 @@ function StatusBars({ pie }) {
 export default function ReportDashboard({ projectId }) {
   const { data, isLoading, isError } = useReport(projectId, { groupBy: 'module' });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <ReportSkeleton />;
   if (isError) return <ErrorState message="Failed to load reports." />;
   if (!data) return null;
 
@@ -74,22 +76,7 @@ export default function ReportDashboard({ projectId }) {
         </div>
       </div>
 
-      {/* ---- Phase 3 extension points (scaffolded, not built) ---- */}
-      <div className="card border-dashed p-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-700">Pass-rate trend</h3>
-          <span className="badge bg-amber-100 text-amber-800">Phase 3 · Chart.js</span>
-        </div>
-        <p className="mt-2 text-xs text-gray-500">
-          Data is already returned by <code>GET /reports</code> (<code>chartData.passTrend</code>,
-          {' '}{chartData.passTrend.length} point(s)). Drop a Chart.js&nbsp;
-          <code>&lt;Line&gt;</code> here to render it.
-        </p>
-        <div className="mt-3 flex gap-2">
-          <button className="btn-secondary" disabled title="Phase 3">Export CSV</button>
-          <button className="btn-secondary" disabled title="Phase 3">Export PDF</button>
-        </div>
-      </div>
+      <PassRateTrend points={chartData.passTrend} projectId={projectId} />
     </div>
   );
 }

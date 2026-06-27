@@ -4,7 +4,8 @@ import { useProjects } from '../../hooks/useProjects.js';
 import { useCan } from '../../hooks/useCan.js';
 import { PROJECT_STATUS, projectStatusBadge } from '../../lib/constants.js';
 import Badge from '../common/Badge.jsx';
-import { Spinner, ErrorState, EmptyState } from '../common/States.jsx';
+import { ErrorState, EmptyState } from '../common/States.jsx';
+import { SkeletonTable } from '../common/Skeleton.jsx';
 import ProjectForm from './ProjectForm.jsx';
 
 const PAGE = 20;
@@ -39,7 +40,7 @@ export default function ProjectList() {
         {manageProjects && <button className="btn-primary" onClick={openCreate}>+ New Project</button>}
       </div>
 
-      {isLoading && <Spinner />}
+      {isLoading && <SkeletonTable rows={5} cols={5} />}
       {isError && <ErrorState message="Failed to load projects." />}
 
       {data && data.projects.length === 0 && (

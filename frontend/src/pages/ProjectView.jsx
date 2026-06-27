@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProject } from '../hooks/useProjects.js';
 import { projectStatusBadge } from '../lib/constants.js';
 import Badge from '../components/common/Badge.jsx';
-import { Spinner, ErrorState } from '../components/common/States.jsx';
+import { ErrorState } from '../components/common/States.jsx';
+import { ProjectViewSkeleton, ReportSkeleton } from '../components/common/Skeleton.jsx';
 import TaskList from '../components/tasks/TaskList.jsx';
-import ReportDashboard from '../components/reports/ReportDashboard.jsx';
+
+// Reports pull in Chart.js — only load that chunk when the Reports tab opens.
+const ReportDashboard = lazy(() => import('../components/reports/ReportDashboard.jsx'));
 
 export default function ProjectView() {
   const { projectId } = useParams();
   const { data: project, isLoading, isError } = useProject(projectId);
   const [tab, setTab] = useState('tasks');
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <ProjectViewSkeleton />;
   if (isError || !project) return <ErrorState message="Project not found." />;
 
   return (
@@ -36,7 +39,13 @@ export default function ProjectView() {
         <TabButton active={tab === 'reports'} onClick={() => setTab('reports')}>Reports</TabButton>
       </div>
 
-      {tab === 'tasks' ? <TaskList projectId={projectId} /> : <ReportDashboard projectId={projectId} />}
+      {tab === 'tasks' ? (
+        <TaskList projectId={projectId} />
+      ) : (
+        <Suspense fallback={<ReportSkeleton />}>
+          <ReportDashboard projectId={projectId} />
+        </Suspense>
+      )}
     </div>
   );
 }
